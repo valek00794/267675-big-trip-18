@@ -19,7 +19,7 @@ const filerFormTemplate = () => ` <form class="trip-filters" action="#" method="
 <button class="visually-hidden" type="submit">Accept filter</button>
 </form>`;
 
-export default class NewFilterFormView {
+export default class FilterFormView {
   getTemplate() {
     return filerFormTemplate();
   }

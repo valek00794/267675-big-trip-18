@@ -1,21 +1,30 @@
-import {render} from '../render.js';
-import NewFilterFormView from '../view/filter-view.js';
+import { render, RenderPosition } from '../render.js';
+import NewPointFormView from '../view/new-point-view.js';
+import EditPointFormView from '../view/edit-point-view.js';
+import ListPointView from '../view/list-point-view.js';
+import ContentItemtView from '../view/content-item-view.js';
+
+
+const MAX_POINT = 3;
 
 export default class MainPresenter {
-  filterComponent = new NewFilterFormView();
 
-  init = (boardContainer) => {
-    this.boardContainer = boardContainer;
+  init = (contentContainer) => {
+    this.contentContainer = contentContainer;
 
-    render(this.boardComponent, this.boardContainer);
-    render(new SortView(), this.boardComponent.getElement());
-  /*  //render(this.taskListComponent, this.boardComponent.getElement());
-    //render(new TaskEditView(), this.taskListComponent.getElement());
+    const listItemEdit = new ContentItemtView();
+    render(listItemEdit, this.contentContainer, RenderPosition.AFTERBEGIN);
+    render(new EditPointFormView(), listItemEdit.getElement());
 
-    for (let i = 0; i < 3; i++) {
-      render(new TaskView(), this.taskListComponent.getElement());
+    for (let i = 0; i < MAX_POINT; i++) {
+      const itemListPonts = new ContentItemtView();
+      render(itemListPonts, this.contentContainer);
+      render(new ListPointView(), itemListPonts.getElement());
     }
 
-    render(new LoadMoreButtonView(), this.boardComponent.getElement());*/
+    const itemListNewPont = new ContentItemtView();
+    render(itemListNewPont, this.contentContainer);
+    render(new NewPointFormView(), itemListNewPont.getElement());
   };
+
 }
