@@ -16,7 +16,7 @@ render(new FilterView(), siteFilterElement);
 const pageBodyElement = document.querySelector('.page-body__page-main');
 const eventsElement = pageBodyElement.querySelector('.trip-events');
 
-render(new SortView(), eventsElement, RenderPosition.BEFOREBEGIN);
+render(new SortView(), eventsElement);
 render(new ContentListView(), eventsElement);
 
 const listElement = eventsElement.querySelector('.trip-events__list');
