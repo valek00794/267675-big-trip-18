@@ -5,21 +5,21 @@ import ListPointView from '../view/list-point-view.js';
 import ContentItemView from '../view/content-item-view.js';
 
 
-const MAX_POINT = 3;
-
 export default class MainPresenter {
 
-  init = (contentContainer) => {
+  init = (contentContainer, pointsModel) => {
     this.contentContainer = contentContainer;
+    this.pointsModel = pointsModel;
+    this.mainPoints = [...this.pointsModel.getPoints()];
 
     const listItemEdit = new ContentItemView();
     render(listItemEdit, this.contentContainer, RenderPosition.AFTERBEGIN);
-    render(new EditPointView(), listItemEdit.getElement());
+    render(new EditPointView(this.mainPoints[0]), listItemEdit.getElement());
 
-    for (let i = 0; i < MAX_POINT; i++) {
+    for (let i = 0; i < this.mainPoints.length; i++) {
       const itemListPonts = new ContentItemView();
       render(itemListPonts, this.contentContainer);
-      render(new ListPointView(), itemListPonts.getElement());
+      render(new ListPointView(this.mainPoints[i]), itemListPonts.getElement());
     }
 
     const itemListNewPont = new ContentItemView();
