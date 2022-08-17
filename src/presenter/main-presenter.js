@@ -26,5 +26,4 @@ export default class MainPresenter {
     render(itemListNewPont, this.contentContainer);
     render(new NewPointView(), itemListNewPont.getElement());
   };
-
 }

@@ -12,7 +12,7 @@ const generateDate = () => {
   return { dateFrom, dateTo };
 };
 
-export const generatePoint = (_id) => {
+export const generatePoint = () => {
   const datePoint = generateDate();
   return {
     //id,
