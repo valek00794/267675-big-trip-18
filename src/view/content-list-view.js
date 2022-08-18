@@ -5,6 +5,7 @@ const contentListTemplate = () => `<ul class="trip-events__list">
 
 export default class ContentListView {
   #element = null;
+
   get template() {
     return contentListTemplate();
   }

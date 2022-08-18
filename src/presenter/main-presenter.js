@@ -1,36 +1,49 @@
-import { render, RenderPosition } from '../render.js';
+import { render } from '../render.js';
 import NewPointView from '../view/new-point-view.js';
 import EditPointView from '../view/edit-point-view.js';
 import ListPointView from '../view/list-point-view.js';
-import ContentItemView from '../view/content-item-view.js';
-
+import ContentListView from '../view/content-list-view.js';
 
 export default class MainPresenter {
   #contentContainer = null;
   #pointsModel = null;
   #mainPoints = null;
+  #contentList = new ContentListView();
 
   init = (contentContainer, pointsModel) => {
     this.#contentContainer = contentContainer;
     this.#pointsModel = pointsModel;
     this.#mainPoints = [...this.#pointsModel.points];
 
-    const listItemEdit = new ContentItemView();
-    render(listItemEdit, this.#contentContainer, RenderPosition.AFTERBEGIN);
-
     for (let i = 0; i < this.#mainPoints.length; i++) {
       this.#renderPoint(this.#mainPoints[i]);
     }
 
-    const itemListNewPont = new ContentItemView();
-    render(itemListNewPont, this.#contentContainer);
-    render(new NewPointView(), itemListNewPont.element);
+    render(this.#contentList, this.#contentContainer);
+    render(new NewPointView(), this.#contentList.element);
   };
 
   #renderPoint = (point) => {
     const pointComponent = new ListPointView(point);
-    const itemListPonts = new ContentItemView();
-    render(itemListPonts, this.#contentContainer);
-    render(pointComponent, itemListPonts.element);
+    const pointEditComponent = new EditPointView(point);
+
+    render(pointComponent, this.#contentList.element);
+
+    const replacePointToForm = () => {
+      this.#contentList.element.replaceChild(pointEditComponent.element, pointComponent.element);
+    };
+
+    const replaceFormToPoint = () => {
+      this.#contentList.element.replaceChild(pointComponent.element, pointEditComponent.element);
+    };
+
+    pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+      replacePointToForm();
+    });
+
+    pointEditComponent.element.querySelector('form').addEventListener('submit', (evt) => {
+      evt.preventDefault();
+      replaceFormToPoint();
+    });
   };
 }
