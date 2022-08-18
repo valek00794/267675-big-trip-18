@@ -1,7 +1,7 @@
 import { createElement } from '../render.js';
 import { mockOffers } from '../mock/offers.js';
 import { destinations } from '../mock/destination.js';
-import { humanizeDateHHmm, humanizeDateMMMDD } from '../utils.js';
+import { humanizeDateHHmm, humanizeDateMMMDD, getTimeFromMins } from '../utils.js';
 
 const listPointTemplate = (point) => {
   const { dateFrom, dateTo, type, destination, basePrice, offers, isFavorite } = point;
@@ -47,7 +47,7 @@ const listPointTemplate = (point) => {
           —
           <time class="event__end-time" datetime="2019-03-18T11:00">${humanizeDateHHmm(dateFrom)}</time>
         </p>
-        <p class="event__duration">${dateTo - dateFrom}</p>
+        <p class="event__duration">${getTimeFromMins(dateTo.diff(dateFrom, 'minute' ))}</p>
       </div>
       <p class="event__price">
         €&nbsp;<span class="event__price-value">${basePrice}</span>
