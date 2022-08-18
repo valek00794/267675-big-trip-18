@@ -17,16 +17,20 @@ export default class MainPresenter {
 
     const listItemEdit = new ContentItemView();
     render(listItemEdit, this.#contentContainer, RenderPosition.AFTERBEGIN);
-    render(new EditPointView(this.#mainPoints[0]), listItemEdit.element);
 
     for (let i = 0; i < this.#mainPoints.length; i++) {
-      const itemListPonts = new ContentItemView();
-      render(itemListPonts, this.#contentContainer);
-      render(new ListPointView(this.#mainPoints[i]), itemListPonts.element);
+      this.#renderPoint(this.#mainPoints[i]);
     }
 
     const itemListNewPont = new ContentItemView();
     render(itemListNewPont, this.#contentContainer);
     render(new NewPointView(), itemListNewPont.element);
+  };
+
+  #renderPoint = (point) => {
+    const pointComponent = new ListPointView(point);
+    const itemListPonts = new ContentItemView();
+    render(itemListPonts, this.#contentContainer);
+    render(pointComponent, itemListPonts.element);
   };
 }
