@@ -55,5 +55,10 @@ export default class MainPresenter {
       replaceFormToPoint();
       document.removeEventListener('keydown', onEscKeyDown);
     });
+
+    pointEditComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+      replaceFormToPoint();
+      document.removeEventListener('keydown', onEscKeyDown);
+    });
   };
 }
