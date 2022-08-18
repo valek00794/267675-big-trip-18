@@ -4,19 +4,20 @@ const contentItemTemplate = () => `<li class="trip-events__item">
 </li>`;
 
 export default class ContentItemView {
-  getTemplate() {
+  #element = null;
+  get template() {
     return contentItemTemplate();
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }

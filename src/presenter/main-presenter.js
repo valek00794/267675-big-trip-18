@@ -6,24 +6,27 @@ import ContentItemView from '../view/content-item-view.js';
 
 
 export default class MainPresenter {
+  #contentContainer = null;
+  #pointsModel = null;
+  #mainPoints = null;
 
   init = (contentContainer, pointsModel) => {
-    this.contentContainer = contentContainer;
-    this.pointsModel = pointsModel;
-    this.mainPoints = [...this.pointsModel.getPoints()];
+    this.#contentContainer = contentContainer;
+    this.#pointsModel = pointsModel;
+    this.#mainPoints = [...this.#pointsModel.points];
 
     const listItemEdit = new ContentItemView();
-    render(listItemEdit, this.contentContainer, RenderPosition.AFTERBEGIN);
-    render(new EditPointView(this.mainPoints[0]), listItemEdit.getElement());
+    render(listItemEdit, this.#contentContainer, RenderPosition.AFTERBEGIN);
+    render(new EditPointView(this.#mainPoints[0]), listItemEdit.element);
 
-    for (let i = 0; i < this.mainPoints.length; i++) {
+    for (let i = 0; i < this.#mainPoints.length; i++) {
       const itemListPonts = new ContentItemView();
-      render(itemListPonts, this.contentContainer);
-      render(new ListPointView(this.mainPoints[i]), itemListPonts.getElement());
+      render(itemListPonts, this.#contentContainer);
+      render(new ListPointView(this.#mainPoints[i]), itemListPonts.element);
     }
 
     const itemListNewPont = new ContentItemView();
-    render(itemListNewPont, this.contentContainer);
-    render(new NewPointView(), itemListNewPont.getElement());
+    render(itemListNewPont, this.#contentContainer);
+    render(new NewPointView(), itemListNewPont.element);
   };
 }
