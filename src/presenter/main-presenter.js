@@ -1,9 +1,8 @@
-import { render } from '../render.js';
+import {render} from '../framework/render.js';
 import NewPointView from '../view/new-point-view.js';
 import EditPointView from '../view/edit-point-view.js';
 import ListPointView from '../view/list-point-view.js';
 import ContentListView from '../view/content-list-view.js';
-import ListEmptyView from '../view/list-empty-view.js';
 
 export default class MainPresenter {
   #contentContainer = null;
@@ -16,18 +15,13 @@ export default class MainPresenter {
     this.#pointsModel = pointsModel;
     this.#mainPoints = [...this.#pointsModel.points];
 
-    if (this.#mainPoints.length) {
-      for (let i = 0; i < this.#mainPoints.length; i++) {
-        this.#renderPoint(this.#mainPoints[i]);
-      }
-      render(this.#contentList, this.#contentContainer);
-      render(new NewPointView(), this.#contentList.element);
+    for (let i = 0; i < this.#mainPoints.length; i++) {
+      this.#renderPoint(this.#mainPoints[i]);
     }
-    else {
-      render(new ListEmptyView(), this.#contentContainer);
-    }
-  };
 
+    render(this.#contentList, this.#contentContainer);
+    render(new NewPointView(), this.#contentList.element);
+  };
 
   #renderPoint = (point) => {
     const pointComponent = new ListPointView(point);

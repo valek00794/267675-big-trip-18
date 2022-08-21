@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { humanizeDateDDMMYYHHmm, ucFirst } from '../utils.js';
 import { TYPES, CITIES } from '../mock/consts.js';
 import { destinations } from '../mock/destination.js';
@@ -117,28 +117,15 @@ const editPointTemplate = (point) => {
   `);
 };
 
-export default class EditPointView {
-  #element = null;
+export default class EditPointView extends AbstractView {
   #point = null;
 
   constructor(point) {
+    super();
     this.#point = point;
   }
 
   get template() {
     return editPointTemplate(this.#point);
   }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
 }
-

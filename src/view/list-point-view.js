@@ -1,7 +1,7 @@
-import { createElement } from '../render.js';
 import { mockOffers } from '../mock/offers.js';
 import { destinations } from '../mock/destination.js';
 import { humanizeDateHHmm, humanizeDateMMMDD, getTimeFromMins } from '../utils.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 const listPointTemplate = (point) => {
   const { dateFrom, dateTo, type, destination, basePrice, offers, isFavorite } = point;
@@ -70,27 +70,15 @@ const listPointTemplate = (point) => {
   `);
 };
 
-export default class ListPointView {
-  #element = null;
+export default class ListPointView extends AbstractView {
   #point = null;
 
   constructor(point) {
+    super();
     this.#point = point;
   }
 
   get template() {
     return listPointTemplate(this.#point);
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

@@ -1,4 +1,4 @@
-import { render, RenderPosition } from './render.js';
+import { render, RenderPosition } from './framework/render.js';
 import FilterView from './view/filter-view.js';
 import SortView from './view/sort-view.js';
 import MainPresenter from './presenter/main-presenter.js';
