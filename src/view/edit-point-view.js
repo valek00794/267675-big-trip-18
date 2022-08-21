@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { humanizeDateDDMMYYHHmm, ucFirst } from '../utils.js';
+import { humanizeDateDDMMYYHHmm, ucFirst } from '../utils/point.js';
 import { TYPES, CITIES } from '../mock/consts.js';
 import { destinations } from '../mock/destination.js';
 import { mockOffers } from '../mock/offers.js';

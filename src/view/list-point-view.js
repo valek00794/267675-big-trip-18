@@ -1,6 +1,6 @@
 import { mockOffers } from '../mock/offers.js';
 import { destinations } from '../mock/destination.js';
-import { humanizeDateHHmm, humanizeDateMMMDD, getTimeFromMins } from '../utils.js';
+import { humanizeDateHHmm, humanizeDateMMMDD, getTimeFromMins } from '../utils/point.js';
 import AbstractView from '../framework/view/abstract-view.js';
 
 const listPointTemplate = (point) => {
