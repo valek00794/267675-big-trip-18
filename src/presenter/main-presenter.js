@@ -1,9 +1,8 @@
-import { render } from '../render.js';
+import {render, replace} from '../framework/render.js';
 import NewPointView from '../view/new-point-view.js';
 import EditPointView from '../view/edit-point-view.js';
 import ListPointView from '../view/list-point-view.js';
 import ContentListView from '../view/content-list-view.js';
-import ListEmptyView from '../view/list-empty-view.js';
 
 export default class MainPresenter {
   #contentContainer = null;
@@ -16,18 +15,13 @@ export default class MainPresenter {
     this.#pointsModel = pointsModel;
     this.#mainPoints = [...this.#pointsModel.points];
 
-    if (this.#mainPoints.length) {
-      for (let i = 0; i < this.#mainPoints.length; i++) {
-        this.#renderPoint(this.#mainPoints[i]);
-      }
-      render(this.#contentList, this.#contentContainer);
-      render(new NewPointView(), this.#contentList.element);
+    for (let i = 0; i < this.#mainPoints.length; i++) {
+      this.#renderPoint(this.#mainPoints[i]);
     }
-    else {
-      render(new ListEmptyView(), this.#contentContainer);
-    }
-  };
 
+    render(this.#contentList, this.#contentContainer);
+    render(new NewPointView(), this.#contentList.element);
+  };
 
   #renderPoint = (point) => {
     const pointComponent = new ListPointView(point);
@@ -36,11 +30,11 @@ export default class MainPresenter {
     render(pointComponent, this.#contentList.element);
 
     const replacePointToForm = () => {
-      this.#contentList.element.replaceChild(pointEditComponent.element, pointComponent.element);
+      replace(pointEditComponent, pointComponent);
     };
 
     const replaceFormToPoint = () => {
-      this.#contentList.element.replaceChild(pointComponent.element, pointEditComponent.element);
+      replace(pointComponent, pointEditComponent);
     };
 
     const onEscKeyDown = (evt) => {
@@ -51,18 +45,17 @@ export default class MainPresenter {
       }
     };
 
-    pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+    pointComponent.setEditClickHandler(() => {
       replacePointToForm();
       document.addEventListener('keydown', onEscKeyDown);
     });
 
-    pointEditComponent.element.querySelector('form').addEventListener('submit', (evt) => {
-      evt.preventDefault();
+    pointEditComponent.setFormSubmitHandler(() => {
       replaceFormToPoint();
       document.removeEventListener('keydown', onEscKeyDown);
     });
 
-    pointEditComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+    pointEditComponent.setEditClickHandler(() => {
       replaceFormToPoint();
       document.removeEventListener('keydown', onEscKeyDown);
     });

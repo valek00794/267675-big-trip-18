@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 // Функция из интернета по генерации случайного числа из диапазона
 // Источник - https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore#_random
 const getRandomInteger = (a = 0, b = 1) => {
@@ -22,31 +21,8 @@ function getRandomElementsFromArray(arr) {
   }
   return elements;
 }
-//Функция напсиания строки с заглавной буквы
-//Источник https://learn.javascript.ru/task/ucfirst
-function ucFirst(str) {
-  if (!str) {
-    return str;
-  }
-  return str[0].toUpperCase() + str.slice(1);
-}
-
-const humanizeDateDDMMYYHHmm = (date) => dayjs(date).format('DD/MM/YY HH:mm');
-const humanizeDateHHmm = (date) => dayjs(date).format('HH:mm');
-const humanizeDateMMMDD = (date) => dayjs(date).format('MMM DD');
-
-const getTimeFromMins = (mins) => {
-  const hours = Math.trunc(mins / 60);
-  const minutes = mins % 60;
-  return `${hours}H ${minutes}M`;
-};
 
 export {
   getRandomInteger,
-  humanizeDateHHmm,
-  humanizeDateMMMDD,
-  humanizeDateDDMMYYHHmm,
   getRandomElementsFromArray,
-  ucFirst,
-  getTimeFromMins
 };

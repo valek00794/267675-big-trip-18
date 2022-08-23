@@ -1,7 +1,7 @@
-import { createElement } from '../render.js';
 import { mockOffers } from '../mock/offers.js';
 import { destinations } from '../mock/destination.js';
-import { humanizeDateHHmm, humanizeDateMMMDD, getTimeFromMins } from '../utils.js';
+import { humanizeDateHHmm, humanizeDateMMMDD, getTimeFromMins } from '../utils/point.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 const listPointTemplate = (point) => {
   const { dateFrom, dateTo, type, destination, basePrice, offers, isFavorite } = point;
@@ -70,11 +70,11 @@ const listPointTemplate = (point) => {
   `);
 };
 
-export default class ListPointView {
-  #element = null;
+export default class ListPointView extends AbstractView {
   #point = null;
 
   constructor(point) {
+    super();
     this.#point = point;
   }
 
@@ -82,15 +82,13 @@ export default class ListPointView {
     return listPointTemplate(this.#point);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
+  setEditClickHandler = (callback) => {
+    this._callback.editClick = callback;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
+  };
 
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
+  #editClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.editClick();
+  };
 }

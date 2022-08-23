@@ -1,5 +1,5 @@
 import { CITY_DESC, CITIES } from './consts.js';
-import { getRandomInteger, getRandomElementsFromArray } from '../utils.js';
+import { getRandomInteger, getRandomElementsFromArray } from '../utils/common.js';
 
 const generateDestination = (id) => ({
   id,
@@ -24,4 +24,3 @@ const getDestinations = (count) => {
 const destinations = getDestinations(CITIES.length);
 
 export { destinations };
-
