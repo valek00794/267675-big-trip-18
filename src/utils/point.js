@@ -12,7 +12,7 @@ const getTimeFromMins = (mins) => {
 
 //Функция напсиания строки с заглавной буквы
 //Источник https://learn.javascript.ru/task/ucfirst
-function ucFirst(str) {
+function setCapitalLetter(str) {
   if (!str) {
     return str;
   }
@@ -24,5 +24,5 @@ export {
   humanizeDateMMMDD,
   humanizeDateDDMMYYHHmm,
   getTimeFromMins,
-  ucFirst
+  setCapitalLetter
 };
