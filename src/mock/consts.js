@@ -55,6 +55,12 @@ const destinationId = {
   MAX: CITIES.length - 1,
 };
 
+const FilterType = {
+  ALL: 'everything',
+  FUTURE: 'future',
+  PAST: 'past',
+};
+
 export {
   POINT_COUNT,
   CITY_DESC,
@@ -64,4 +70,5 @@ export {
   offerPrice,
   basePrice,
   destinationId,
+  FilterType,
 };
