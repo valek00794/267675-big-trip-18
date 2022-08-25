@@ -43,9 +43,9 @@ const listPointTemplate = (point) => {
       <h3 class="event__title">${type} ${getDestinationName()}</h3>
       <div class="event__schedule">
         <p class="event__time">
-          <time class="event__start-time" datetime="2019-03-18T10:30">${humanizeDateHHmm(dateTo)}</time>
+          <time class="event__start-time" datetime="2019-03-18T10:30">${humanizeDateHHmm(dateFrom)}</time>
           —
-          <time class="event__end-time" datetime="2019-03-18T11:00">${humanizeDateHHmm(dateFrom)}</time>
+          <time class="event__end-time" datetime="2019-03-18T11:00">${humanizeDateHHmm(dateTo)}</time>
         </p>
         <p class="event__duration">${getTimeFromMins(dateTo.diff(dateFrom, 'minute' ))}</p>
       </div>
