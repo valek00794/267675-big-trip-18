@@ -5,7 +5,9 @@ export const generateTripInfo = (points) => {
   const tripInfo = getTripInfo(points);
   const mockTripInfo = {};
   if (tripInfo.pointsSequence.length > 3){
-    mockTripInfo['tripTitle'] = `${CITIES[tripInfo.pointsSequence[0].destination]} —...— ${CITIES[tripInfo.pointsSequence[tripInfo.pointsSequence.length - 1].destination]}`;
+    mockTripInfo['tripTitle'] = `
+    ${CITIES[tripInfo.pointsSequence[0].destination]} —...— 
+    ${CITIES[tripInfo.pointsSequence[tripInfo.pointsSequence.length - 1].destination]}`;
   } else {
     const tripTitle = tripInfo.pointsSequence.map((point) => CITIES[point.destination]);
     mockTripInfo['tripTitle'] = tripTitle.join(' — ');
