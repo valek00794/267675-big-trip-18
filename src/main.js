@@ -4,20 +4,25 @@ import SortView from './view/sort-view.js';
 import MainPresenter from './presenter/main-presenter.js';
 import TripInfoView from './view/trip-info-view.js';
 import PointsModel from './model/points-model.js';
-
+import {generateFilter} from './mock/filter.js';
+import {generateTripInfo} from './mock/trip-info.js';
 
 const siteMainTripElement = document.querySelector('.trip-main');
 const siteFilterElement = siteMainTripElement.querySelector('.trip-controls__filters');
-
-render(new TripInfoView(), siteMainTripElement, RenderPosition.AFTERBEGIN);
-
-render(new FilterView(), siteFilterElement);
-
 const pageBodyElement = document.querySelector('.page-body__page-main');
 const eventsElement = pageBodyElement.querySelector('.trip-events');
 
-render(new SortView(), eventsElement);
-
 const pointsModel = new PointsModel();
 const mainPresenter = new MainPresenter();
+
+const filters = generateFilter(pointsModel.points);
+const tripInfo = generateTripInfo(pointsModel.points);
+
+render(new TripInfoView(tripInfo), siteMainTripElement, RenderPosition.AFTERBEGIN);
+
+render(new FilterView(filters), siteFilterElement);
+
+render(new SortView(), eventsElement);
+
 mainPresenter.init(eventsElement, pointsModel);
+

@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { humanizeDateDDMMYYHHmm, ucFirst } from '../utils/point.js';
+import { humanizeDateDDMMYYHHmm, setCapitalLetter } from '../utils/point.js';
 import { TYPES, CITIES } from '../mock/consts.js';
 import { destinations } from '../mock/destination.js';
 import { mockOffers } from '../mock/offers.js';
@@ -33,7 +33,7 @@ const editPointTemplate = (point) => {
     TYPES.map((iterationType) => `
       <div class="event__type-item">
         <input id="event-type-${iterationType}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${iterationType}" ${currentType === iterationType ? 'checked' : ''}>
-        <label class="event__type-label  event__type-label--${iterationType}" for="event-type-${iterationType}-1">${ucFirst(iterationType)}</label>
+        <label class="event__type-label  event__type-label--${iterationType}" for="event-type-${iterationType}-1">${setCapitalLetter(iterationType)}</label>
       </div>
     `).join('');
 
@@ -78,10 +78,10 @@ const editPointTemplate = (point) => {
 
         <div class="event__field-group  event__field-group--time">
           <label class="visually-hidden" for="event-start-time-1">From</label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${humanizeDateDDMMYYHHmm(dateTo)}">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${humanizeDateDDMMYYHHmm(dateFrom)}">
           —
           <label class="visually-hidden" for="event-end-time-1">To</label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${humanizeDateDDMMYYHHmm(dateFrom)}">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${humanizeDateDDMMYYHHmm(dateTo)}">
         </div>
 
         <div class="event__field-group  event__field-group--price">

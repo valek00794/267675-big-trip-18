@@ -50,9 +50,10 @@ const offerPrice = {
   MAX: 100,
 };
 
-const destinationId = {
-  MIN: 1,
-  MAX: CITIES.length - 1,
+const FilterType = {
+  ALL: 'everything',
+  FUTURE: 'future',
+  PAST: 'past',
 };
 
 export {
@@ -63,5 +64,5 @@ export {
   EXTRA_OFFERS,
   offerPrice,
   basePrice,
-  destinationId,
+  FilterType,
 };
