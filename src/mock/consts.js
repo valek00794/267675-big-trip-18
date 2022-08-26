@@ -56,6 +56,8 @@ const FilterType = {
   PAST: 'past',
 };
 
+const maxShowTitleCities = 3;
+
 export {
   POINT_COUNT,
   CITY_DESC,
@@ -65,4 +67,5 @@ export {
   offerPrice,
   basePrice,
   FilterType,
+  maxShowTitleCities,
 };
