@@ -92,9 +92,9 @@ export default class ListPointView extends AbstractView {
     this._callback.editClick();
   };
 
-  #setFavoriteClickHandler = (callback) => {
+  setFavoriteClickHandler = (callback) => {
     this._callback.favoriteClick = callback;
-    this.element.querySelector('.event__favorite-icon').addEventListener('click', this.#favoriteClickHandler);
+    this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#favoriteClickHandler);
   };
 
   #favoriteClickHandler = (evt) => {

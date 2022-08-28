@@ -13,7 +13,7 @@ const pageBodyElement = document.querySelector('.page-body__page-main');
 const eventsElement = pageBodyElement.querySelector('.trip-events');
 
 const pointsModel = new PointsModel();
-const mainPresenter = new MainPresenter();
+const mainPresenter = new MainPresenter(eventsElement, pointsModel);
 
 if (pointsModel.points.length) {
   const filters = generateFilter(pointsModel.points);
@@ -26,5 +26,5 @@ if (pointsModel.points.length) {
 
 render(new SortView(), eventsElement);
 
-mainPresenter.init(eventsElement, pointsModel);
+mainPresenter.init();
 

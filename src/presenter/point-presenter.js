@@ -1,7 +1,7 @@
 import { render, replace, remove } from '../framework/render.js';
 import EditPointView from '../view/edit-point-view.js';
 import ListPointView from '../view/list-point-view.js';
-//import { updateItem } from '../utils/common.js';
+
 
 export default class PointPresenter {
   #contentList = null;
@@ -27,7 +27,7 @@ export default class PointPresenter {
     this.#pointEditComponent = new EditPointView(point);
 
     this.#pointComponent.setEditClickHandler(this.#handleEditClick);
-    //this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
+    this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
     this.#pointEditComponent.setFormSubmitHandler(this.#handleEditClickFormSubmit);
     this.#pointEditComponent.setEditClickHandler(this.#handleEditCloseClick);
 

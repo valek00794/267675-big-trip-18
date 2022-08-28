@@ -3,6 +3,7 @@ import NewPointView from '../view/new-point-view.js';
 import ContentListView from '../view/content-list-view.js';
 import ListEmptyView from '../view/list-empty-view.js';
 import PointPresenter from './point-presenter.js';
+import { updateItem } from '../utils/common.js';
 
 export default class MainPresenter {
   #contentContainer = null;
@@ -13,9 +14,14 @@ export default class MainPresenter {
   #newPointComponent = new NewPointView();
   #emptyComponent = new ListEmptyView();
 
-  init = (contentContainer, pointsModel) => {
+  #pointsPresenter = new Map();
+
+  constructor(contentContainer, pointsModel) {
     this.#contentContainer = contentContainer;
     this.#pointsModel = pointsModel;
+  }
+
+  init = () => {
     this.#mainPoints = [...this.#pointsModel.points];
 
     if (this.#mainPoints.length) {
@@ -31,8 +37,9 @@ export default class MainPresenter {
   };
 
   #renderPoint = (point) => {
-    const pointPresenter = new PointPresenter(this.#contentList.element);
+    const pointPresenter = new PointPresenter(this.#contentList.element, this.#handlePointChange);
     pointPresenter.init(point);
+    this.#pointsPresenter.set(point.id, pointPresenter);
   };
 
   #renderEmptyContentList = () => {
@@ -45,5 +52,10 @@ export default class MainPresenter {
 
   #renderNewPoint = () => {
     render(this.#newPointComponent, this.#contentList.element);
+  };
+
+  #handlePointChange = (updatedPoint) => {
+    this.#mainPoints = updateItem(this.#mainPoints, updatedPoint);
+    this.#pointsPresenter.get(updatedPoint.id).init(updatedPoint);
   };
 }
