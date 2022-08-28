@@ -1,4 +1,4 @@
-import {render, replace} from '../framework/render.js';
+import {render, replace, remove} from '../framework/render.js';
 import EditPointView from '../view/edit-point-view.js';
 import ListPointView from '../view/list-point-view.js';
 
@@ -6,45 +6,73 @@ export default class PointPresenter {
   #contentList = null;
   #point = null;
 
+  #pointComponent = null;
+  #pointEditComponent = null;
+
   constructor(contentList) {
     this.#contentList = contentList;
   }
 
   init = (point) => {
     this.#point = point;
-    const pointComponent = new ListPointView(point);
-    const pointEditComponent = new EditPointView(point);
 
-    render(pointComponent, this.#contentList);
+    const prevPointComponent = this.#pointComponent;
+    const prevPointEditComponent = this.#pointEditComponent;
 
-    const replacePointToForm = () => {
-      replace(pointEditComponent, pointComponent);
-    };
+    this.#pointComponent = new ListPointView(point);
+    this.#pointEditComponent = new EditPointView(point);
 
-    const replaceFormToPoint = () => {
-      replace(pointComponent, pointEditComponent);
-    };
+    this.#pointComponent.setEditClickHandler(this.#handleEditClick);
+    this.#pointEditComponent.setFormSubmitHandler(this.#handleEditClickFormSubmit);
+    this.#pointEditComponent.setEditClickHandler(this.#handleEditCloseClick);
 
-    const onEscKeyDown = (evt) => {
-      if (evt.key === 'Escape' || evt.key === 'Esc') {
-        evt.preventDefault();
-        replaceFormToPoint();
-        document.removeEventListener('keydown', onEscKeyDown);
-      }
-    };
-    pointComponent.setEditClickHandler(() => {
-      replacePointToForm();
-      document.addEventListener('keydown', onEscKeyDown);
-    });
+    if (prevPointComponent === null || prevPointEditComponent === null) {
+      render(this.#pointComponent, this.#contentList);
+      return;
+    }
 
-    pointEditComponent.setFormSubmitHandler(() => {
-      replaceFormToPoint();
-      document.removeEventListener('keydown', onEscKeyDown);
-    });
+    if (this.#contentList.contains(prevPointComponent.element)) {
+      replace(this.#pointComponent, prevPointComponent);
+    }
 
-    pointEditComponent.setEditClickHandler(() => {
-      replaceFormToPoint();
-      document.removeEventListener('keydown', onEscKeyDown);
-    });
+    if (this.#contentList.contains(prevPointEditComponent.element)) {
+      replace(this.#pointEditComponent, prevPointEditComponent);
+    }
+    remove(prevPointComponent);
+    remove(prevPointEditComponent);
+
+  };
+
+  #replacePointToForm = () => {
+    replace(this.#pointEditComponent, this.#pointComponent);
+  };
+
+  #replaceFormToPoint = () => {
+    replace(this.#pointComponent, this.#pointEditComponent);
+  };
+
+  #escKeyDownHandler = (evt) => {
+    if (evt.key === 'Escape' || evt.key === 'Esc') {
+      evt.preventDefault();
+      this.#replaceFormToPoint();
+      document.removeEventListener('keydown', this.#escKeyDownHandler);
+    }
+  };
+
+  #handleEditClick = () => {
+    this.#replacePointToForm();
+    document.addEventListener('keydown', this.#escKeyDownHandler);
+  };
+
+  #handleEditClickFormSubmit = () => {
+    this.#replaceFormToPoint();
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
+  };
+
+  #handleEditCloseClick = () => {
+    this.#replaceFormToPoint();
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 }
+
+
