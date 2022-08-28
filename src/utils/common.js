@@ -22,8 +22,6 @@ const getRandomElementsFromArray = (arr) => {
   return elements;
 };
 
-const getId = () => ~~(Math.random() * 1e8);
-
 const updateItem = (items, update) => {
   const index = items.findIndex((item) => item.id === update.id);
 
@@ -42,5 +40,4 @@ export {
   getRandomInteger,
   getRandomElementsFromArray,
   updateItem,
-  getId,
 };
