@@ -1,16 +1,20 @@
-import {render, replace, remove} from '../framework/render.js';
+import { render, replace, remove } from '../framework/render.js';
 import EditPointView from '../view/edit-point-view.js';
 import ListPointView from '../view/list-point-view.js';
+//import { updateItem } from '../utils/common.js';
 
 export default class PointPresenter {
   #contentList = null;
   #point = null;
 
+  #changeData = null;
+
   #pointComponent = null;
   #pointEditComponent = null;
 
-  constructor(contentList) {
+  constructor(contentList, changeData) {
     this.#contentList = contentList;
+    this.#changeData = changeData;
   }
 
   init = (point) => {
@@ -23,6 +27,7 @@ export default class PointPresenter {
     this.#pointEditComponent = new EditPointView(point);
 
     this.#pointComponent.setEditClickHandler(this.#handleEditClick);
+    //this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
     this.#pointEditComponent.setFormSubmitHandler(this.#handleEditClickFormSubmit);
     this.#pointEditComponent.setEditClickHandler(this.#handleEditCloseClick);
 
@@ -40,7 +45,11 @@ export default class PointPresenter {
     }
     remove(prevPointComponent);
     remove(prevPointEditComponent);
+  };
 
+  destroy = () => {
+    remove(this.#pointComponent);
+    remove(this.#pointEditComponent);
   };
 
   #replacePointToForm = () => {
@@ -72,6 +81,10 @@ export default class PointPresenter {
   #handleEditCloseClick = () => {
     this.#replaceFormToPoint();
     document.removeEventListener('keydown', this.#escKeyDownHandler);
+  };
+
+  #handleFavoriteClick = () => {
+    this.#changeData({...this.#point, isFavorite: !this.#point.isFavorite});
   };
 }
 

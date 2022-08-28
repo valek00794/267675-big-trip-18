@@ -8,7 +8,7 @@ const getRandomInteger = (a = 0, b = 1) => {
 };
 //Функция получения случайного массива из исходного массива
 //Источник проект Кексобукинг https://github.com/valek00794/267675-keksobooking-26
-function getRandomElementsFromArray(arr) {
+const getRandomElementsFromArray = (arr) => {
   const maxLength = arr.length;
   const lengthOfArray = getRandomInteger(1, maxLength);
   const elements = [];
@@ -20,9 +20,27 @@ function getRandomElementsFromArray(arr) {
     }
   }
   return elements;
-}
+};
+
+const getId = () => ~~(Math.random() * 1e8);
+
+const updateItem = (items, update) => {
+  const index = items.findIndex((item) => item.id === update.id);
+
+  if (index === -1) {
+    return items;
+  }
+
+  return [
+    ...items.slice(0, index),
+    update,
+    ...items.slice(index + 1),
+  ];
+};
 
 export {
   getRandomInteger,
   getRandomElementsFromArray,
+  updateItem,
+  getId,
 };
