@@ -1,10 +1,10 @@
 import { getTripInfo } from '../utils/trip-info.js';
-import { CITIES } from '../mock/consts.js';
+import { CITIES, maxShowTitleCities } from '../mock/consts.js';
 
 export const generateTripInfo = (points) => {
   const tripInfo = getTripInfo(points);
   const mockTripInfo = {};
-  if (tripInfo.pointsSequence.length > 3){
+  if (tripInfo.pointsSequence.length > maxShowTitleCities){
     mockTripInfo['tripTitle'] = `
     ${CITIES[tripInfo.pointsSequence[0].destination]} —...— 
     ${CITIES[tripInfo.pointsSequence[tripInfo.pointsSequence.length - 1].destination]}`;

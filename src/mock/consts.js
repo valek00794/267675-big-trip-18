@@ -56,6 +56,13 @@ const FilterType = {
   PAST: 'past',
 };
 
+const maxShowTitleCities = 3;
+
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
+
 export {
   POINT_COUNT,
   CITY_DESC,
@@ -65,4 +72,6 @@ export {
   offerPrice,
   basePrice,
   FilterType,
+  maxShowTitleCities,
+  Mode,
 };

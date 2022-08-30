@@ -1,63 +1,65 @@
-import {render, replace} from '../framework/render.js';
+import {render} from '../framework/render.js';
 import NewPointView from '../view/new-point-view.js';
-import EditPointView from '../view/edit-point-view.js';
-import ListPointView from '../view/list-point-view.js';
 import ContentListView from '../view/content-list-view.js';
+import ListEmptyView from '../view/list-empty-view.js';
+import PointPresenter from './point-presenter.js';
+import { updateItem } from '../utils/common.js';
 
 export default class MainPresenter {
   #contentContainer = null;
   #pointsModel = null;
   #mainPoints = null;
-  #contentList = new ContentListView();
 
-  init = (contentContainer, pointsModel) => {
+  #contentList = new ContentListView();
+  #newPointComponent = new NewPointView();
+  #emptyComponent = new ListEmptyView();
+
+  #pointsPresenter = new Map();
+
+  constructor(contentContainer, pointsModel) {
     this.#contentContainer = contentContainer;
     this.#pointsModel = pointsModel;
+  }
+
+  init = () => {
     this.#mainPoints = [...this.#pointsModel.points];
 
-    for (let i = 0; i < this.#mainPoints.length; i++) {
-      this.#renderPoint(this.#mainPoints[i]);
+    if (this.#mainPoints.length) {
+      for (let i = 0; i < this.#mainPoints.length; i++) {
+        this.#renderPoint(this.#mainPoints[i]);
+      }
+      this.#renderContentList();
+      this.#renderNewPoint();
     }
-
-    render(this.#contentList, this.#contentContainer);
-    render(new NewPointView(), this.#contentList.element);
+    else {
+      this.#renderEmptyContentList();
+    }
   };
 
   #renderPoint = (point) => {
-    const pointComponent = new ListPointView(point);
-    const pointEditComponent = new EditPointView(point);
+    const pointPresenter = new PointPresenter(this.#contentList.element, this.#handlePointChange, this.#handleModeChange);
+    pointPresenter.init(point);
+    this.#pointsPresenter.set(point.id, pointPresenter);
+  };
 
-    render(pointComponent, this.#contentList.element);
+  #renderEmptyContentList = () => {
+    render(this.#emptyComponent, this.#contentContainer);
+  };
 
-    const replacePointToForm = () => {
-      replace(pointEditComponent, pointComponent);
-    };
+  #renderContentList = () => {
+    render(this.#contentList, this.#contentContainer);
+  };
 
-    const replaceFormToPoint = () => {
-      replace(pointComponent, pointEditComponent);
-    };
+  #renderNewPoint = () => {
+    render(this.#newPointComponent, this.#contentList.element);
+  };
 
-    const onEscKeyDown = (evt) => {
-      if (evt.key === 'Escape' || evt.key === 'Esc') {
-        evt.preventDefault();
-        replaceFormToPoint();
-        document.removeEventListener('keydown', onEscKeyDown);
-      }
-    };
+  #handlePointChange = (updatedPoint) => {
+    this.#mainPoints = updateItem(this.#mainPoints, updatedPoint);
+    this.#pointsPresenter.get(updatedPoint.id).init(updatedPoint);
+  };
 
-    pointComponent.setEditClickHandler(() => {
-      replacePointToForm();
-      document.addEventListener('keydown', onEscKeyDown);
-    });
-
-    pointEditComponent.setFormSubmitHandler(() => {
-      replaceFormToPoint();
-      document.removeEventListener('keydown', onEscKeyDown);
-    });
-
-    pointEditComponent.setEditClickHandler(() => {
-      replaceFormToPoint();
-      document.removeEventListener('keydown', onEscKeyDown);
-    });
+  #handleModeChange = () => {
+    this.#pointsPresenter.forEach((presenter) => presenter.resetView());
   };
 }

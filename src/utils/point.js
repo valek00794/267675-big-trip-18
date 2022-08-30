@@ -12,12 +12,12 @@ const getTimeFromMins = (mins) => {
 
 //Функция напсиания строки с заглавной буквы
 //Источник https://learn.javascript.ru/task/ucfirst
-function setCapitalLetter(str) {
+const setCapitalLetter = (str) => {
   if (!str) {
     return str;
   }
   return str[0].toUpperCase() + str.slice(1);
-}
+};
 
 export {
   humanizeDateHHmm,
