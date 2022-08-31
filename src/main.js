@@ -1,6 +1,5 @@
 import { render, RenderPosition } from './framework/render.js';
 import FilterView from './view/filter-view.js';
-import SortView from './view/sort-view.js';
 import MainPresenter from './presenter/main-presenter.js';
 import TripInfoView from './view/trip-info-view.js';
 import PointsModel from './model/points-model.js';
@@ -23,8 +22,6 @@ if (pointsModel.points.length) {
 
   render(new FilterView(filters), siteFilterElement);
 }
-
-render(new SortView(), eventsElement);
 
 mainPresenter.init();
 
