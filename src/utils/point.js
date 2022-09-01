@@ -41,9 +41,9 @@ const sortPointUp = (pointA, pointB) => {
   return weight ?? dayjs(pointA.dateFrom).diff(dayjs(pointB.dateFrom));
 };
 
-const sortPointTime = (pointA, pointB) => (pointA.dateTo - pointA.dateFrom) - (pointB.dateTo - pointB.dateFrom);
+const sortPointTime = (pointA, pointB) => (pointB.dateTo - pointB.dateFrom) - (pointA.dateTo - pointA.dateFrom);
 
-const sortPointPrice = (pointA, pointB) => pointA.basePrice - pointB.basePrice;
+const sortPointPrice = (pointA, pointB) => pointB.basePrice - pointA.basePrice;
 
 export {
   humanizeDateHHmm,
