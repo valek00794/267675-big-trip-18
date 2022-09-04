@@ -2,26 +2,28 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { humanizeDateDDMMYYHHmm, setCapitalLetter } from '../utils/point.js';
 import { TYPES, CITIES } from '../mock/consts.js';
 import { destinations } from '../mock/destination.js';
-import { mockOffers, mockOffersByType } from '../mock/offers.js';
-import flatpickr from 'flatpickr';
-console.log(mockOffersByType);
+import { mockOffersByType } from '../mock/offers.js';
+
 import 'flatpickr/dist/flatpickr.min.css';
 
 const editPointTemplate = (point) => {
   const { dateFrom, dateTo, type, destination, basePrice, offers } = point;
 
-  const isOfferChecked = (offer) => offers.includes(offer.id) ? 'checked' : '';
+  const isOfferChecked = (offer) => offers.includes(offer) ? 'checked' : '';
 
-  const createEditOfferTemplate = () => mockOffers.map((offer) => `
+  const createEditOfferTemplate = () => {
+    const offersByType = mockOffersByType.filter((typeOffers) => typeOffers.type === type);
+    return offersByType[0].offers.map((offer) => `
       <div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${TYPES[offer.id]}-1" type="checkbox" name="event-offer-luggage" ${isOfferChecked(offer)}>
-        <label class="event__offer-label" for="event-offer-${TYPES[offer.id]}-1">
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.id}-1" type="checkbox" name="event-offer-luggage" ${isOfferChecked(offer)}>
+        <label class="event__offer-label" for="event-offer-${offer.id}-1">
           <span class="event__offer-title">${offer.title}</span>
           &plus;&euro;&nbsp;
           <span class="event__offer-price">${offer.price}</span>
         </label>
       </div>
      `).join(' ');
+  };
 
   const offersTemplate = createEditOfferTemplate();
 
@@ -147,11 +149,11 @@ export default class EditPointView extends AbstractStatefulView {
   };
 
   #setInnerHandlers = () => {
-    Array.from(this.element
-      .querySelectorAll('.event__type-input'))
+    Array.from(this.element.querySelectorAll('.event__type-input'))
       .forEach((eventType) => eventType.addEventListener('click', this.#eventTypeToggleHandler));
 
-    this.element.querySelector('.event__input--destination').addEventListener('change', this.#eventDestinationInputHandler);
+    this.element.querySelector('.event__input--destination')
+      .addEventListener('change', this.#eventDestinationInputHandler);
   };
 
   #eventTypeToggleHandler = (evt) => {
@@ -159,14 +161,16 @@ export default class EditPointView extends AbstractStatefulView {
     this.updateElement({
       type: evt.target.value,
     });
+    console.log(evt.target.value);
   };
 
   #eventDestinationInputHandler = (evt) => {
     evt.preventDefault();
-    this.updateElement({
-      selectedCity: evt.target.value,
-    });
-    console.log(evt.target.value);
+    if (evt.target.value) {
+      this.updateElement({
+        destination: CITIES.indexOf(evt.target.value),
+      });
+    }
   };
 
   #formSubmitHandler = (evt) => {
