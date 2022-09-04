@@ -2,20 +2,17 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { humanizeDateDDMMYYHHmm, setCapitalLetter } from '../utils/point.js';
 import { TYPES, CITIES } from '../mock/consts.js';
 import { destinations } from '../mock/destination.js';
-import { mockOffers } from '../mock/offers.js';
+import { mockOffers, mockOffersByType } from '../mock/offers.js';
+import flatpickr from 'flatpickr';
+console.log(mockOffersByType);
+import 'flatpickr/dist/flatpickr.min.css';
 
 const editPointTemplate = (point) => {
   const { dateFrom, dateTo, type, destination, basePrice, offers } = point;
+
   const isOfferChecked = (offer) => offers.includes(offer.id) ? 'checked' : '';
 
-  const createEditOfferTemplate = () => {
-    const destOffers = [];
-    for (const mockOffer of mockOffers) {
-      if (offers.includes(mockOffer.id)) {
-        destOffers.push(mockOffer);
-      }
-    }
-    return mockOffers.map((offer) => `
+  const createEditOfferTemplate = () => mockOffers.map((offer) => `
       <div class="event__offer-selector">
         <input class="event__offer-checkbox  visually-hidden" id="event-offer-${TYPES[offer.id]}-1" type="checkbox" name="event-offer-luggage" ${isOfferChecked(offer)}>
         <label class="event__offer-label" for="event-offer-${TYPES[offer.id]}-1">
@@ -25,7 +22,6 @@ const editPointTemplate = (point) => {
         </label>
       </div>
      `).join(' ');
-  };
 
   const offersTemplate = createEditOfferTemplate();
 
@@ -128,15 +124,16 @@ const editPointTemplate = (point) => {
 };
 
 export default class EditPointView extends AbstractStatefulView {
-  #point = null;
 
   constructor(point) {
     super();
-    this.#point = point;
+    this._state = EditPointView.parsePointToState(point);
+
+    this.#setInnerHandlers();
   }
 
   get template() {
-    return editPointTemplate(this.#point);
+    return editPointTemplate(this._state);
   }
 
   setFormSubmitHandler = (callback) => {
@@ -144,9 +141,37 @@ export default class EditPointView extends AbstractStatefulView {
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
   };
 
+  _restoreHandlers = () => {
+    this.#setInnerHandlers();
+    this.setFormSubmitHandler(this._callback.formSubmit);
+  };
+
+  #setInnerHandlers = () => {
+    Array.from(this.element
+      .querySelectorAll('.event__type-input'))
+      .forEach((eventType) => eventType.addEventListener('click', this.#eventTypeToggleHandler));
+
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#eventDestinationInputHandler);
+  };
+
+  #eventTypeToggleHandler = (evt) => {
+    evt.preventDefault();
+    this.updateElement({
+      type: evt.target.value,
+    });
+  };
+
+  #eventDestinationInputHandler = (evt) => {
+    evt.preventDefault();
+    this.updateElement({
+      selectedCity: evt.target.value,
+    });
+    console.log(evt.target.value);
+  };
+
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this._callback.formSubmit();
+    this._callback.formSubmit(EditPointView.parseStateToPoint(this._state));
   };
 
   setEditClickHandler = (callback) => {
@@ -158,4 +183,16 @@ export default class EditPointView extends AbstractStatefulView {
     evt.preventDefault();
     this._callback.editClick();
   };
+
+  static parsePointToState = (point) => ({
+    ...point,
+
+  });
+
+  static parseStateToPoint = (state) => {
+    const point = { ...state };
+
+    return point;
+  };
+
 }
