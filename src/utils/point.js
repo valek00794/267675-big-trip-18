@@ -6,8 +6,9 @@ const humanizeDateMMMDD = (date) => dayjs(date).format('MMM DD');
 
 const getTimeFromMins = (mins) => {
   const hours = Math.trunc(mins / 60);
+  const days = Math.trunc(hours / 24);
   const minutes = mins % 60;
-  return `${hours}H ${minutes}M`;
+  return `${days}D ${hours}H ${minutes}M`;
 };
 
 //Функция напсиания строки с заглавной буквы
