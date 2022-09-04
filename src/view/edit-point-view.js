@@ -104,7 +104,6 @@ const editPointTemplate = (point) => {
       <section class="event__details">
         <section class="event__section  event__section--offers">
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-
           <div class="event__available-offers">
           ${offersTemplate}
           </div>
@@ -138,6 +137,12 @@ export default class EditPointView extends AbstractStatefulView {
     return editPointTemplate(this._state);
   }
 
+  reset = (point) => {
+    this.updateElement(
+      EditPointView.parsePointToState(point),
+    );
+  };
+
   setFormSubmitHandler = (callback) => {
     this._callback.formSubmit = callback;
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
@@ -146,6 +151,7 @@ export default class EditPointView extends AbstractStatefulView {
   _restoreHandlers = () => {
     this.#setInnerHandlers();
     this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setEditClickHandler(this._callback.editClick);
   };
 
   #setInnerHandlers = () => {
@@ -160,8 +166,9 @@ export default class EditPointView extends AbstractStatefulView {
     evt.preventDefault();
     this.updateElement({
       type: evt.target.value,
+      offers: [],
+
     });
-    console.log(evt.target.value);
   };
 
   #eventDestinationInputHandler = (evt) => {
@@ -190,7 +197,6 @@ export default class EditPointView extends AbstractStatefulView {
 
   static parsePointToState = (point) => ({
     ...point,
-
   });
 
   static parseStateToPoint = (state) => {
