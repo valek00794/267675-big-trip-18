@@ -2,21 +2,22 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { humanizeDateDDMMYYHHmm, setCapitalLetter } from '../utils/point.js';
 import { TYPES, CITIES } from '../mock/consts.js';
 import { destinations } from '../mock/destination.js';
-import { mockOffersByType } from '../mock/offers.js';
+import { mockOffersByType, mockOffers } from '../mock/offers.js';
 
 import 'flatpickr/dist/flatpickr.min.css';
 
 const editPointTemplate = (point) => {
   const { dateFrom, dateTo, type, destination, basePrice, offers } = point;
-
+  console.log(offers);
   const isOfferChecked = (offer) => offers.includes(offer) ? 'checked' : '';
+
 
   const createEditOfferTemplate = () => {
     const offersByType = mockOffersByType.filter((typeOffers) => typeOffers.type === type);
     return offersByType[0].offers.map((offer) => `
       <div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.id}-1" type="checkbox" name="event-offer-luggage" ${isOfferChecked(offer)}>
-        <label class="event__offer-label" for="event-offer-${offer.id}-1">
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.id}" data-id="${offer.id}" type="checkbox" name="event-offer-${offer.id}" ${isOfferChecked(offer)}>
+        <label class="event__offer-label" for="event-offer-${offer.id}">
           <span class="event__offer-title">${offer.title}</span>
           &plus;&euro;&nbsp;
           <span class="event__offer-price">${offer.price}</span>
@@ -160,6 +161,8 @@ export default class EditPointView extends AbstractStatefulView {
 
     this.element.querySelector('.event__input--destination')
       .addEventListener('change', this.#eventDestinationInputHandler);
+    Array.from(this.element.querySelectorAll('.event__offer-checkbox'))
+      .forEach((eventType) => eventType.addEventListener('change', this.#eventSelectOffersToggleHandler));
   };
 
   #eventTypeToggleHandler = (evt) => {
@@ -167,7 +170,6 @@ export default class EditPointView extends AbstractStatefulView {
     this.updateElement({
       type: evt.target.value,
       offers: [],
-
     });
   };
 
@@ -178,6 +180,15 @@ export default class EditPointView extends AbstractStatefulView {
         destination: CITIES.indexOf(evt.target.value),
       });
     }
+  };
+
+  #eventSelectOffersToggleHandler = () => {
+    const selectOffers = [];
+    Array.from(this.element.querySelectorAll('.event__offer-checkbox'))
+      .forEach((checkbox) => checkbox.checked ? selectOffers.push(mockOffers[Number(checkbox.dataset.id)]) : '');
+    this.updateElement({
+      offers: selectOffers,
+    });
   };
 
   #formSubmitHandler = (evt) => {
