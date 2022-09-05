@@ -8,7 +8,7 @@ import 'flatpickr/dist/flatpickr.min.css';
 
 const editPointTemplate = (point) => {
   const { dateFrom, dateTo, type, destination, basePrice, offers } = point;
-  console.log(offers);
+
   const isOfferChecked = (offer) => offers.includes(offer) ? 'checked' : '';
 
 
