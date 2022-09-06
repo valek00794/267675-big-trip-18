@@ -1,14 +1,20 @@
 import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+
+dayjs.extend(duration);
 
 const humanizeDateDDMMYYHHmm = (date) => dayjs(date).format('DD/MM/YY HH:mm');
 const humanizeDateHHmm = (date) => dayjs(date).format('HH:mm');
 const humanizeDateMMMDD = (date) => dayjs(date).format('MMM DD');
-
-const getTimeFromMins = (mins) => {
-  const hours = Math.trunc(mins / 60);
-  const days = Math.trunc(hours / 24);
-  const minutes = mins % 60;
-  return `${days}D ${hours}H ${minutes}M`;
+const humanizeDateDDHHmm = (dateFrom, dateTo) => {
+  const minutes = dayjs(dateTo).diff(dayjs(dateFrom), 'minute');
+  if (minutes < 60) {
+    return dayjs.duration(minutes, 'minutes').format('mm[m]');
+  }
+  if (minutes >= 60 && minutes < 1440) {
+    return dayjs.duration(minutes, 'minutes').format('HH[h] mm[m]');
+  }
+  return dayjs.duration(minutes, 'minutes').format('DD[d] HH[h] mm[m]');
 };
 
 //Функция напсиания строки с заглавной буквы
@@ -50,7 +56,7 @@ export {
   humanizeDateHHmm,
   humanizeDateMMMDD,
   humanizeDateDDMMYYHHmm,
-  getTimeFromMins,
+  humanizeDateDDHHmm,
   setCapitalLetter,
   sortPointUp,
   sortPointPrice,
