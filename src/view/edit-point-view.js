@@ -201,6 +201,7 @@ export default class EditPointView extends AbstractStatefulView {
         enableTime: true,
         // eslint-disable-next-line camelcase
         time_24hr: true,
+        defaultDate: [startTimeInput.value, endTimeInput.value],
         dateFormat: 'd/m/y H:i',
         'plugins': [new rangePlugin({ input: endTimeInput })],
         onClose: this.#datesChangeHandler,
