@@ -185,8 +185,6 @@ export default class EditPointView extends AbstractStatefulView {
   };
 
   #datesChangeHandler = ([userDateStart, userDateEnd]) => {
-    console.log(userDateStart);
-    console.log(userDateEnd);
     this.updateElement({
       dateFrom: userDateStart,
       dateTo: userDateEnd,
@@ -201,11 +199,11 @@ export default class EditPointView extends AbstractStatefulView {
       startTimeInput,
       {
         enableTime: true,
-       // allowInput: true,
-        dateFormat: 'd/m/Y H:i',
+        // eslint-disable-next-line camelcase
+        time_24hr: true,
+        dateFormat: 'd/m/y H:i',
         'plugins': [new rangePlugin({ input: endTimeInput })],
-        onChange: this.#datesChangeHandler,
-   //     onClose: this.#datesChangeHandler,
+        onClose: this.#datesChangeHandler,
       },
     );
   };
