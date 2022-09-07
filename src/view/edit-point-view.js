@@ -197,8 +197,6 @@ export default class EditPointView extends AbstractStatefulView {
     });
   };
 
-
-
   #setFromDatepicker = () => {
     const dateStartInput = this.element.querySelector('input[name="event-start-time"]');
     this.#datepicker = flatpickr(
