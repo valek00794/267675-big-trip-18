@@ -186,6 +186,12 @@ export default class EditPointView extends AbstractStatefulView {
   };
 
   #dateStartHandler = ([userDateStart]) => {
+    if (userDateStart > this._state.dateTo) {
+      this.updateElement({
+        dateFrom: userDateStart,
+        dateTo: userDateStart,
+      });
+    }
     this.updateElement({
       dateFrom: userDateStart,
     });
@@ -212,6 +218,7 @@ export default class EditPointView extends AbstractStatefulView {
   };
 
   #setToDatepicker = () => {
+    const dateStartInput = this.element.querySelector('input[name="event-start-time"]');
     const dateEndInput = this.element.querySelector('input[name="event-end-time"]');
     this.#datepicker = flatpickr(
       dateEndInput,
@@ -220,6 +227,7 @@ export default class EditPointView extends AbstractStatefulView {
         'time_24hr': true,
         defaultDate: dateEndInput.value,
         dateFormat: 'd/m/y H:i',
+        minDate: dateStartInput.value,
         onClose: this.#dateEndHandler,
       },
     );
