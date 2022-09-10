@@ -1,11 +1,11 @@
-import { render, RenderPosition } from '../framework/render.js';
+import { render, RenderPosition, remove } from '../framework/render.js';
 
 import NewPointView from '../view/new-point-view.js';
 import ContentListView from '../view/content-list-view.js';
 import ListEmptyView from '../view/list-empty-view.js';
 import SortView from '../view/sort-view.js';
 import TripInfoView from '../view/trip-info-view.js';
-import FilterView from '../view/filter-view.js';
+
 
 import PointPresenter from './point-presenter.js';
 
@@ -13,17 +13,16 @@ import { sortPointUp, sortPointPrice, sortPointTime } from '../utils/point.js';
 
 import { SortType, UpdateType, UserAction } from '../mock/consts.js';
 import { generateTripInfo } from '../mock/trip-info.js';
-import { generateFilter } from '../mock/filter.js';
-
 
 export default class MainPresenter {
   #contentContainer = null;
   #pointsModel = null;
 
-  #contentList = new ContentListView();
+  #contentListComponent = new ContentListView();
   #newPointComponent = new NewPointView();
   #emptyComponent = new ListEmptyView();
-  #sortComponent = new SortView();
+  #sortComponent = null;
+  #tripInfoComponent = null;
 
   #pointsPresenter = new Map();
   #currentSortType = SortType.DEFAULT;
@@ -51,7 +50,7 @@ export default class MainPresenter {
   };
 
   #renderPoint = (point) => {
-    const pointPresenter = new PointPresenter(this.#contentList.element, this.#handleViewAction, this.#handleModeChange);
+    const pointPresenter = new PointPresenter(this.#contentListComponent.element, this.#handleViewAction, this.#handleModeChange);
     pointPresenter.init(point);
     this.#pointsPresenter.set(point.id, pointPresenter);
   };
@@ -67,28 +66,24 @@ export default class MainPresenter {
   };
 
   #renderContentList = () => {
-    render(this.#contentList, this.#contentContainer);
+    render(this.#contentListComponent, this.#contentContainer);
   };
 
   #renderNewPoint = () => {
-    render(this.#newPointComponent, this.#contentList.element);
+    render(this.#newPointComponent, this.#contentListComponent.element);
   };
 
   #renderSort = () => {
-    render(this.#sortComponent, this.#contentContainer, RenderPosition.AFTERBEGIN);
+    this.#sortComponent = new SortView(this.#currentSortType);
     this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
+    render(this.#sortComponent, this.#contentContainer, RenderPosition.AFTERBEGIN);
   };
 
   #renderTripInfo = () => {
     const siteMainTripElement = document.querySelector('.trip-main');
     const tripInfo = generateTripInfo(this.points);
-    render(new TripInfoView(tripInfo), siteMainTripElement, RenderPosition.AFTERBEGIN);
-  };
-
-  #renderFilter = () => {
-    const siteFilterElement = document.querySelector('.trip-controls__filters');
-    const filters = generateFilter(this.points);
-    render(new FilterView(filters), siteFilterElement);
+    this.#tripInfoComponent = new TripInfoView(tripInfo);
+    render(this.#tripInfoComponent, siteMainTripElement, RenderPosition.AFTERBEGIN);
   };
 
   #clearPointList = () => {
@@ -101,20 +96,20 @@ export default class MainPresenter {
       return;
     }
     this.#currentSortType = sortType;
-    this.#clearPointList();
-    this.#renderPoints();
+    this.#clearContent();
+    this.#renderContent();
   };
 
   #handleViewAction = (actionType, updateType, update) => {
     switch (actionType) {
-      case UserAction.UPDATE_TASK:
-        this.#pointsModel.updateTask(updateType, update);
+      case UserAction.UPDATE_POINT:
+        this.#pointsModel.updatePoint(updateType, update);
         break;
-      case UserAction.ADD_TASK:
-        this.#pointsModel.addTask(updateType, update);
+      case UserAction.ADD_POINT:
+        this.#pointsModel.addPoint(updateType, update);
         break;
-      case UserAction.DELETE_TASK:
-        this.#pointsModel.deleteTask(updateType, update);
+      case UserAction.DELETE_POINT:
+        this.#pointsModel.deletePoint(updateType, update);
         break;
     }
   };
@@ -123,13 +118,17 @@ export default class MainPresenter {
     switch (updateType) {
       case UpdateType.PATCH:
         // - обновить часть списка (например, когда поменялось описание)
-        this.#pointsModel.get(data.id).init(data);
+        this.#pointsPresenter.get(data.id).init(data);
         break;
       case UpdateType.MINOR:
         // - обновить список (например, когда задача ушла в архив)
+        this.#clearContent();
+        this.#renderContent();
         break;
       case UpdateType.MAJOR:
         // - обновить всю доску (например, при переключении фильтра)
+        this.#clearContent({resetSortType: true});
+        this.#renderContent();
         break;
     }
   };
@@ -138,17 +137,34 @@ export default class MainPresenter {
     this.#pointsPresenter.forEach((presenter) => presenter.resetView());
   };
 
+  #clearContent = ({resetSortType = false} = {}) => {
+
+    this.#pointsPresenter.forEach((presenter) => presenter.destroy());
+    this.#pointsPresenter.clear();
+
+    remove(this.#sortComponent);
+    remove(this.#emptyComponent);
+    remove(this.#tripInfoComponent);
+
+    if (resetSortType) {
+      this.#currentSortType = SortType.DEFAULT;
+    }
+  };
+
   #renderContent = () => {
-    if (this.points.length) {
-      this.#renderContentList();
-      this.#renderTripInfo();
-      this.#renderSort();
-      this.#renderFilter();
-      this.#renderPoints();
-    }
-    else {
+    const points = this.points;
+    const pointCount = points.length;
+    if (pointCount === 0) {
       this.#renderEmptyContentList();
+      return;
     }
+
+    this.#renderSort();
+
+    render(this.#contentListComponent, this.#contentContainer);
+
+    this.#renderTripInfo();
+    this.#renderPoints();
     this.#renderNewPoint();
   };
 
