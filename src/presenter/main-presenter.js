@@ -9,7 +9,6 @@ import FilterView from '../view/filter-view.js';
 
 import PointPresenter from './point-presenter.js';
 
-import { updateItem } from '../utils/common.js';
 import { sortPointUp, sortPointPrice, sortPointTime } from '../utils/point.js';
 
 import { SortType } from '../mock/consts.js';
@@ -20,7 +19,6 @@ import { generateFilter } from '../mock/filter.js';
 export default class MainPresenter {
   #contentContainer = null;
   #pointsModel = null;
-  #mainPoints = null;
 
   #contentList = new ContentListView();
   #newPointComponent = new NewPointView();
@@ -29,7 +27,6 @@ export default class MainPresenter {
 
   #pointsPresenter = new Map();
   #currentSortType = SortType.DEFAULT;
-  #sourcedMainPoints = [];
 
   constructor(contentContainer, pointsModel) {
     this.#contentContainer = contentContainer;
@@ -37,17 +34,18 @@ export default class MainPresenter {
   }
 
   get points() {
-    return this.#pointsModel.points;
+    switch (this.#currentSortType) {
+      case SortType.TIME:
+        return [...this.#pointsModel.points].sort(sortPointTime);
+      case SortType.PTICE:
+        return [...this.#pointsModel.points].sort(sortPointPrice);
+      default:
+        return [...this.#pointsModel.points].sort(sortPointUp);
+    }
   }
 
   init = () => {
-    this.#mainPoints = [...this.#pointsModel.points];
-
-    this.#sourcedMainPoints = [...this.#pointsModel.points];
-    this.#sortPoints();
-    this.#renderPoints();
-
-
+    this.#renderContent();
   };
 
   #renderPoint = (point) => {
@@ -57,19 +55,9 @@ export default class MainPresenter {
   };
 
   #renderPoints = () => {
-    if (this.#mainPoints.length) {
-      for (let i = 0; i < this.#mainPoints.length; i++) {
-        this.#renderPoint(this.#mainPoints[i]);
-      }
-      this.#renderContentList();
-      this.#renderNewPoint();
-      this.#renderTripInfo();
-      this.#renderFilter();
+    for (let i = 0; i < this.points.length; i++) {
+      this.#renderPoint(this.points[i]);
     }
-    else {
-      this.#renderEmptyContentList();
-    }
-    this.#renderSort();
   };
 
   #renderEmptyContentList = () => {
@@ -91,13 +79,13 @@ export default class MainPresenter {
 
   #renderTripInfo = () => {
     const siteMainTripElement = document.querySelector('.trip-main');
-    const tripInfo = generateTripInfo(this.#mainPoints);
+    const tripInfo = generateTripInfo(this.points);
     render(new TripInfoView(tripInfo), siteMainTripElement, RenderPosition.AFTERBEGIN);
   };
 
   #renderFilter = () => {
     const siteFilterElement = document.querySelector('.trip-controls__filters');
-    const filters = generateFilter(this.#mainPoints);
+    const filters = generateFilter(this.points);
     render(new FilterView(filters), siteFilterElement);
   };
 
@@ -106,36 +94,36 @@ export default class MainPresenter {
     this.#pointsPresenter.clear();
   };
 
-  #sortPoints = (sortType) => {
-    switch (sortType) {
-      case SortType.TIME:
-        this.#mainPoints.sort(sortPointTime);
-        break;
-      case SortType.PTICE:
-        this.#mainPoints.sort(sortPointPrice);
-        break;
-      default:
-        this.#mainPoints.sort(sortPointUp);
-    }
-    this.#currentSortType = sortType;
-  };
-
   #handleSortTypeChange = (sortType) => {
     if (this.#currentSortType === sortType) {
       return;
     }
-    this.#sortPoints(sortType);
+    this.#currentSortType = sortType;
     this.#clearPointList();
     this.#renderPoints();
   };
 
   #handlePointChange = (updatedPoint) => {
-    this.#mainPoints = updateItem(this.#mainPoints, updatedPoint);
-    this.#sourcedMainPoints = updateItem(this.#sourcedMainPoints, updatedPoint);
+
     this.#pointsPresenter.get(updatedPoint.id).init(updatedPoint);
   };
 
   #handleModeChange = () => {
     this.#pointsPresenter.forEach((presenter) => presenter.resetView());
   };
+
+  #renderContent = () => {
+    if (this.points.length) {
+      this.#renderContentList();
+      this.#renderTripInfo();
+      this.#renderSort();
+      this.#renderFilter();
+      this.#renderPoints();
+    }
+    else {
+      this.#renderEmptyContentList();
+    }
+    this.#renderNewPoint();
+  };
+
 }
