@@ -1,12 +1,21 @@
 import { render, RenderPosition } from '../framework/render.js';
+
 import NewPointView from '../view/new-point-view.js';
 import ContentListView from '../view/content-list-view.js';
 import ListEmptyView from '../view/list-empty-view.js';
 import SortView from '../view/sort-view.js';
+import TripInfoView from '../view/trip-info-view.js';
+import FilterView from '../view/filter-view.js';
+
 import PointPresenter from './point-presenter.js';
+
 import { updateItem } from '../utils/common.js';
 import { sortPointUp, sortPointPrice, sortPointTime } from '../utils/point.js';
+
 import { SortType } from '../mock/consts.js';
+import { generateTripInfo } from '../mock/trip-info.js';
+import { generateFilter } from '../mock/filter.js';
+
 
 export default class MainPresenter {
   #contentContainer = null;
@@ -34,6 +43,7 @@ export default class MainPresenter {
     this.#sortPoints();
     this.#renderPoints();
 
+
   };
 
   #renderPoint = (point) => {
@@ -49,6 +59,8 @@ export default class MainPresenter {
       }
       this.#renderContentList();
       this.#renderNewPoint();
+      this.#renderTripInfo();
+      this.#renderFilter();
     }
     else {
       this.#renderEmptyContentList();
@@ -71,6 +83,18 @@ export default class MainPresenter {
   #renderSort = () => {
     render(this.#sortComponent, this.#contentContainer, RenderPosition.AFTERBEGIN);
     this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
+  };
+
+  #renderTripInfo = () => {
+    const siteMainTripElement = document.querySelector('.trip-main');
+    const tripInfo = generateTripInfo(this.#mainPoints);
+    render(new TripInfoView(tripInfo), siteMainTripElement, RenderPosition.AFTERBEGIN);
+  };
+
+  #renderFilter = () => {
+    const siteFilterElement = document.querySelector('.trip-controls__filters');
+    const filters = generateFilter(this.#mainPoints);
+    render(new FilterView(filters), siteFilterElement);
   };
 
   #clearPointList = () => {
