@@ -179,10 +179,13 @@ export default class EditPointView extends AbstractStatefulView {
     Array.from(this.element.querySelectorAll('.event__type-input'))
       .forEach((eventType) => eventType.addEventListener('click', this.#eventTypeToggleHandler));
 
-    this.element.querySelector('.event__input--destination')
-      .addEventListener('change', this.#eventDestinationInputHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#eventDestinationInputHandler);
+
     Array.from(this.element.querySelectorAll('.event__offer-checkbox'))
-      .forEach((eventType) => eventType.addEventListener('change', this.#eventSelectOffersToggleHandler));
+      .forEach((eventOffer) => eventOffer.addEventListener('change', this.#eventSelectOffersToggleHandler));
+
+    Array.from(this.element.querySelectorAll('.event__input--price'))
+      .forEach((eventPrice) => eventPrice.addEventListener('change', this.#eventPriceChangeHandler));
   };
 
   #dateStartHandler = ([userDateStart]) => {
@@ -256,6 +259,13 @@ export default class EditPointView extends AbstractStatefulView {
       .forEach((checkbox) => checkbox.checked ? selectOffers.push(mockOffers[Number(checkbox.dataset.id)]) : '');
     this.updateElement({
       offers: selectOffers,
+    });
+  };
+
+  #eventPriceChangeHandler = (evt) => {
+    evt.preventDefault();
+    this.updateElement({
+      basePrice: evt.target.value,
     });
   };
 
