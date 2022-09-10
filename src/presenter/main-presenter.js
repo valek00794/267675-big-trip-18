@@ -36,6 +36,10 @@ export default class MainPresenter {
     this.#pointsModel = pointsModel;
   }
 
+  get points() {
+    return this.#pointsModel.points;
+  }
+
   init = () => {
     this.#mainPoints = [...this.#pointsModel.points];
 
