@@ -5,6 +5,7 @@ import ContentListView from '../view/content-list-view.js';
 import ListEmptyView from '../view/list-empty-view.js';
 import SortView from '../view/sort-view.js';
 import TripInfoView from '../view/trip-info-view.js';
+import FilterView from '../view/filter-view.js';
 
 
 import PointPresenter from './point-presenter.js';
@@ -13,6 +14,7 @@ import { sortPointUp, sortPointPrice, sortPointTime } from '../utils/point.js';
 
 import { SortType, UpdateType, UserAction } from '../mock/consts.js';
 import { generateTripInfo } from '../mock/trip-info.js';
+import { generateFilter } from '../mock/filter.js';
 
 export default class MainPresenter {
   #contentContainer = null;
@@ -23,6 +25,7 @@ export default class MainPresenter {
   #emptyComponent = new ListEmptyView();
   #sortComponent = null;
   #tripInfoComponent = null;
+  #filterComponent = null;
 
   #pointsPresenter = new Map();
   #currentSortType = SortType.DEFAULT;
@@ -65,10 +68,6 @@ export default class MainPresenter {
     render(this.#emptyComponent, this.#contentContainer);
   };
 
-  #renderContentList = () => {
-    render(this.#contentListComponent, this.#contentContainer);
-  };
-
   #renderNewPoint = () => {
     render(this.#newPointComponent, this.#contentListComponent.element);
   };
@@ -79,16 +78,18 @@ export default class MainPresenter {
     render(this.#sortComponent, this.#contentContainer, RenderPosition.AFTERBEGIN);
   };
 
+  #renderFilter = () => {
+    const siteFilterElement = document.querySelector('.trip-controls__filters');
+    const filters = generateFilter(this.points);
+    this.#filterComponent = new FilterView(filters);
+    render(this.#filterComponent, siteFilterElement);
+  };
+
   #renderTripInfo = () => {
     const siteMainTripElement = document.querySelector('.trip-main');
     const tripInfo = generateTripInfo(this.points);
     this.#tripInfoComponent = new TripInfoView(tripInfo);
     render(this.#tripInfoComponent, siteMainTripElement, RenderPosition.AFTERBEGIN);
-  };
-
-  #clearPointList = () => {
-    this.#pointsPresenter.forEach((presenter) => presenter.destroy());
-    this.#pointsPresenter.clear();
   };
 
   #handleSortTypeChange = (sortType) => {
@@ -145,6 +146,7 @@ export default class MainPresenter {
     remove(this.#sortComponent);
     remove(this.#emptyComponent);
     remove(this.#tripInfoComponent);
+    remove(this.#filterComponent);
 
     if (resetSortType) {
       this.#currentSortType = SortType.DEFAULT;
@@ -166,6 +168,7 @@ export default class MainPresenter {
     this.#renderTripInfo();
     this.#renderPoints();
     this.#renderNewPoint();
+    this.#renderFilter();
   };
 
 }
