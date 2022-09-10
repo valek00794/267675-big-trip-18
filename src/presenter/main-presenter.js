@@ -11,7 +11,7 @@ import PointPresenter from './point-presenter.js';
 
 import { sortPointUp, sortPointPrice, sortPointTime } from '../utils/point.js';
 
-import { SortType } from '../mock/consts.js';
+import { SortType, UpdateType, UserAction } from '../mock/consts.js';
 import { generateTripInfo } from '../mock/trip-info.js';
 import { generateFilter } from '../mock/filter.js';
 
@@ -106,19 +106,32 @@ export default class MainPresenter {
   };
 
   #handleViewAction = (actionType, updateType, update) => {
-    console.log(actionType, updateType, update);
-    // Здесь будем вызывать обновление модели.
-    // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
-    // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
-    // update - обновленные данные
+    switch (actionType) {
+      case UserAction.UPDATE_TASK:
+        this.#pointsModel.updateTask(updateType, update);
+        break;
+      case UserAction.ADD_TASK:
+        this.#pointsModel.addTask(updateType, update);
+        break;
+      case UserAction.DELETE_TASK:
+        this.#pointsModel.deleteTask(updateType, update);
+        break;
+    }
   };
 
   #handleModelEvent = (updateType, data) => {
-    console.log(updateType, data);
-    // В зависимости от типа изменений решаем, что делать:
-    // - обновить часть списка (например, когда поменялось описание)
-    // - обновить список (например, когда задача ушла в архив)
-    // - обновить всю доску (например, при переключении фильтра)
+    switch (updateType) {
+      case UpdateType.PATCH:
+        // - обновить часть списка (например, когда поменялось описание)
+        this.#pointsModel.get(data.id).init(data);
+        break;
+      case UpdateType.MINOR:
+        // - обновить список (например, когда задача ушла в архив)
+        break;
+      case UpdateType.MAJOR:
+        // - обновить всю доску (например, при переключении фильтра)
+        break;
+    }
   };
 
   #handleModeChange = () => {
