@@ -1,8 +1,9 @@
 import { render, replace, remove } from '../framework/render.js';
+
 import EditPointView from '../view/edit-point-view.js';
 import ListPointView from '../view/list-point-view.js';
-import { Mode } from '../mock/consts.js';
 
+import { Mode, UserAction, UpdateType } from '../mock/consts.js';
 
 export default class PointPresenter {
   #contentList = null;
@@ -90,7 +91,11 @@ export default class PointPresenter {
   };
 
   #handleEditClickFormSubmit = (point) => {
-    this.#changeData(point);
+    this.#changeData(
+      UserAction.UPDATE_TASK,
+      UpdateType.MINOR,
+      point,
+    );
     this.#replaceFormToPoint();
   };
 
@@ -101,7 +106,10 @@ export default class PointPresenter {
   };
 
   #handleFavoriteClick = () => {
-    this.#changeData({...this.#point, isFavorite: !this.#point.isFavorite});
+    this.#changeData(
+      UserAction.UPDATE_TASK,
+      UpdateType.MINOR,
+      {...this.#point, isFavorite: !this.#point.isFavorite});
   };
 }
 

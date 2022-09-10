@@ -1,11 +1,14 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
+
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
+
 import { humanizeDateDDMMYYHHmm, setCapitalLetter } from '../utils/point.js';
+
 import { TYPES, CITIES } from '../mock/consts.js';
 import { destinations } from '../mock/destination.js';
 import { mockOffersByType, mockOffers } from '../mock/offers.js';
-import flatpickr from 'flatpickr';
 
-import 'flatpickr/dist/flatpickr.min.css';
 
 const editPointTemplate = (point) => {
   const { dateFrom, dateTo, type, destination, basePrice, offers } = point;
