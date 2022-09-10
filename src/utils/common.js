@@ -10,7 +10,7 @@ const getRandomInteger = (a = 0, b = 1) => {
 //Источник проект Кексобукинг https://github.com/valek00794/267675-keksobooking-26
 const getRandomElementsFromArray = (arr) => {
   const maxLength = arr.length;
-  const lengthOfArray = getRandomInteger(1, maxLength);
+  const lengthOfArray = getRandomInteger(0, maxLength);
   const elements = [];
   for (let i = elements.length; i < lengthOfArray; i++) {
     const indexOfElement = getRandomInteger(0, maxLength - 1);

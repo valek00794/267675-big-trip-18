@@ -14,15 +14,21 @@ const listPointTemplate = (point) => {
       }
     }
   };
+  const createOfferTemplate = () => {
+    let offersTemplate = '';
+    if (offers.length !== 0) {
+      offersTemplate = offers
+        .map((offer) => `
+      <li class="event__offer">
+       <span class="event__offer-title">${offer.title}</span>
+       &plus;&euro;&nbsp;
+       <span class="event__offer-price">${offer.price}</span>
+      </li>
+    `).join(' ');
+    }
+    return offersTemplate;
+  };
 
-  const createOfferTemplate = () => offers
-    .map((offer) => `
-        <li class="event__offer">
-         <span class="event__offer-title">${offer.title}</span>
-         &plus;&euro;&nbsp;
-         <span class="event__offer-price">${offer.price}</span>
-        </li>
-      `).join(' ');
 
   return (`
    <li class="trip-events__item">

@@ -7,7 +7,8 @@ const generateDestination = (id) => ({
   name: CITIES[id],
   pictures: [
     {
-      src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 100)}`,
+    //  src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 100)}`,
+      src: '#',
       description: `${CITIES[id]} ${CITY_DESC[getRandomInteger(0, CITY_DESC.length - 1)].split().slice(0,1)}`,
     }
   ]
