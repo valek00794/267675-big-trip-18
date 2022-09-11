@@ -11,7 +11,7 @@ import PointPresenter from './point-presenter.js';
 import { sortPointUp, sortPointPrice, sortPointTime } from '../utils/point.js';
 import {filter} from '../utils/filter.js';
 
-import { SortType, UpdateType, UserAction } from '../mock/consts.js';
+import { SortType, UpdateType, UserAction, FilterType } from '../mock/consts.js';
 import { generateTripInfo } from '../mock/trip-info.js';
 
 
@@ -22,13 +22,14 @@ export default class MainPresenter {
 
   #contentListComponent = new ContentListView();
   #newPointComponent = new NewPointView();
-  #emptyComponent = new ListEmptyView();
+  #emptyComponent = null;
   #sortComponent = null;
   #tripInfoComponent = null;
   #filterComponent = null;
 
   #pointsPresenter = new Map();
   #currentSortType = SortType.DEFAULT;
+  #filterType = FilterType.ALL;
 
   constructor(contentContainer, pointsModel, filterModel) {
     this.#contentContainer = contentContainer;
@@ -40,9 +41,9 @@ export default class MainPresenter {
   }
 
   get points() {
-    const filterType = this.#filterModel.filter;
+    this.#filterType = this.#filterModel.filter;
     const points = this.#pointsModel.points;
-    const filteredPoints = filter[filterType](points);
+    const filteredPoints = filter[this.#filterType](points);
 
     switch (this.#currentSortType) {
       case SortType.TIME:
@@ -71,6 +72,7 @@ export default class MainPresenter {
   };
 
   #renderEmptyContentList = () => {
+    this.#emptyComponent = new ListEmptyView(this.#filterType);
     render(this.#emptyComponent, this.#contentContainer);
   };
 
@@ -143,9 +145,12 @@ export default class MainPresenter {
     this.#pointsPresenter.clear();
 
     remove(this.#sortComponent);
-    remove(this.#emptyComponent);
     remove(this.#tripInfoComponent);
     remove(this.#filterComponent);
+
+    if (this.#emptyComponent){
+      remove(this.#emptyComponent);
+    }
 
     if (resetSortType) {
       this.#currentSortType = SortType.DEFAULT;
