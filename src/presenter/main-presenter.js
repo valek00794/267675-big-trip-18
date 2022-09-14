@@ -1,12 +1,12 @@
 import { render, RenderPosition, remove } from '../framework/render.js';
 
-import NewPointView from '../view/new-point-view.js';
 import ContentListView from '../view/content-list-view.js';
 import ListEmptyView from '../view/list-empty-view.js';
 import SortView from '../view/sort-view.js';
 import TripInfoView from '../view/trip-info-view.js';
 
 import PointPresenter from './point-presenter.js';
+import NewPointPresenter from './new-point-presenter.js';
 
 import { sortPointUp, sortPointPrice, sortPointTime } from '../utils/point.js';
 import {filter} from '../utils/filter.js';
@@ -21,13 +21,13 @@ export default class MainPresenter {
   #filterModel = null;
 
   #contentListComponent = new ContentListView();
-  #newPointComponent = new NewPointView();
   #emptyComponent = null;
   #sortComponent = null;
   #tripInfoComponent = null;
   #filterComponent = null;
 
   #pointsPresenter = new Map();
+  #newPointPresenter = null;
   #currentSortType = SortType.DEFAULT;
   #filterType = FilterType.ALL;
 
@@ -35,6 +35,7 @@ export default class MainPresenter {
     this.#contentContainer = contentContainer;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
+    this.#newPointPresenter = new NewPointPresenter(this.#contentListComponent, this.#handleViewAction);
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
@@ -59,6 +60,12 @@ export default class MainPresenter {
     this.#renderContent();
   };
 
+  createPoint = (callback) => {
+    this.#currentSortType = SortType.DEFAULT;
+    this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.ALL);
+    this.#newPointPresenter.init(callback);
+  };
+
   #renderPoint = (point) => {
     const pointPresenter = new PointPresenter(this.#contentListComponent.element, this.#handleViewAction, this.#handleModeChange);
     pointPresenter.init(point);
@@ -74,10 +81,6 @@ export default class MainPresenter {
   #renderEmptyContentList = () => {
     this.#emptyComponent = new ListEmptyView(this.#filterType);
     render(this.#emptyComponent, this.#contentContainer);
-  };
-
-  #renderNewPoint = () => {
-    render(this.#newPointComponent, this.#contentListComponent.element);
   };
 
   #renderSort = () => {
@@ -119,16 +122,13 @@ export default class MainPresenter {
   #handleModelEvent = (updateType, data) => {
     switch (updateType) {
       case UpdateType.PATCH:
-        // - обновить часть списка (например, когда поменялось описание)
         this.#pointsPresenter.get(data.id).init(data);
         break;
       case UpdateType.MINOR:
-        // - обновить список (например, когда задача ушла в архив)
         this.#clearContent();
         this.#renderContent();
         break;
       case UpdateType.MAJOR:
-        // - обновить всю доску (например, при переключении фильтра)
         this.#clearContent({resetSortType: true});
         this.#renderContent();
         break;
@@ -136,11 +136,13 @@ export default class MainPresenter {
   };
 
   #handleModeChange = () => {
+    this.#newPointPresenter.destroy();
     this.#pointsPresenter.forEach((presenter) => presenter.resetView());
   };
 
   #clearContent = ({resetSortType = false} = {}) => {
 
+    this.#newPointPresenter.destroy();
     this.#pointsPresenter.forEach((presenter) => presenter.destroy());
     this.#pointsPresenter.clear();
 
@@ -171,7 +173,6 @@ export default class MainPresenter {
 
     this.#renderTripInfo();
     this.#renderPoints();
-    this.#renderNewPoint();
   };
 
 }
