@@ -15,7 +15,6 @@ const editPointTemplate = (point) => {
 
   const isOfferChecked = (offer) => offers.includes(offer) ? 'checked' : '';
 
-
   const createEditOfferTemplate = () => {
     const offersByType = mockOffersByType.filter((typeOffers) => typeOffers.type === type);
     return offersByType[0].offers.map((offer) => `
@@ -31,11 +30,10 @@ const editPointTemplate = (point) => {
   };
 
   const offersTemplate = createEditOfferTemplate();
-
   const createPhotoTemplate = (pictures) =>
     pictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`).join('');
 
-  const photoTemplate = destination ? createPhotoTemplate(destinations[destination].pictures) : '';
+  const photoTemplate = destination !== undefined ? createPhotoTemplate(destinations[destination].pictures) : '';
 
   const createEditTypeTemplate = (currentType) =>
     TYPES.map((iterationType) => `
@@ -97,7 +95,7 @@ const editPointTemplate = (point) => {
             <span class="visually-hidden">Price</span>
             €
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${Number(basePrice)}" onkeydown="return event.keyCode !== 69" >
+          <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${Math.abs(Number(basePrice))}" onkeydown="return event.keyCode !== 69 && event.keyCode !== 189" >
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -114,7 +112,7 @@ const editPointTemplate = (point) => {
           </div>
         </section>
 
-        <section class="event__section  event__section--destination">
+        <section class="event__section  event__section--destination ${destination === undefined ? 'visually-hidden' : ''}">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
           <p class="event__destination-description">${destination !== undefined ? destinations[destination].description : ''}</p>
           <div class="event__photos-container">
@@ -259,15 +257,13 @@ export default class EditPointView extends AbstractStatefulView {
 
   #eventDestinationInputHandler = (evt) => {
     evt.preventDefault();
-    CITIES.forEach((city) => {
-      if (city === evt.target.value && evt.target.value){
-        this.updateElement({
-          destination: CITIES.indexOf(evt.target.value),
-        });
-      } else {
-        evt.target.value = '';
-      }
-    });
+    if (CITIES.includes(evt.target.value) && evt.target.value) {
+      this.updateElement({
+        destination: CITIES.indexOf(evt.target.value),
+      });
+    } else {
+      evt.target.value = '';
+    }
   };
 
   #eventSelectOffersToggleHandler = () => {

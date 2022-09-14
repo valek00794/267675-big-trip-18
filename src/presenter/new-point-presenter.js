@@ -8,9 +8,7 @@ import { UserAction, UpdateType } from '../mock/consts.js';
 
 export default class NewPointPresenter {
   #contentList = null;
-
   #changeData = null;
-
   #pointEditComponent = null;
   #destroyCallback = null;
 
@@ -43,7 +41,6 @@ export default class NewPointPresenter {
     }
 
     this.#destroyCallback?.();
-
     remove(this.#pointEditComponent);
     this.#pointEditComponent = null;
 
@@ -70,7 +67,6 @@ export default class NewPointPresenter {
     this.destroy();
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
-
 }
 
 

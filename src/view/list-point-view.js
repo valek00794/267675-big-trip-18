@@ -47,7 +47,7 @@ const listPointTemplate = (point) => {
         <p class="event__duration">${humanizeDateDDHHmm(dateFrom, dateTo)}</p>
       </div>
       <p class="event__price">
-        €&nbsp;<span class="event__price-value">${Number(basePrice)}</span>
+        €&nbsp;<span class="event__price-value">${Math.abs(Number(basePrice))}</span>
       </p>
       <h4 class="visually-hidden">Offers:</h4>
       <ul class="event__selected-offers">
