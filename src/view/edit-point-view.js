@@ -58,7 +58,7 @@ const editPointTemplate = (point) => {
        `).join('')}
     </datalist>`;
 
-  const destListTemplate = createDestinationListTemplate(destination !== undefined ? destinations[destination].name : '') ;
+  const destListTemplate = createDestinationListTemplate(destination !== undefined ? destinations[destination].name : '');
 
   return (`
     <li class="trip-events__item">
@@ -97,7 +97,7 @@ const editPointTemplate = (point) => {
             <span class="visually-hidden">Price</span>
             €
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
+          <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${Number(basePrice)}" onkeydown="return event.keyCode !== 69" >
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -116,7 +116,7 @@ const editPointTemplate = (point) => {
 
         <section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">${ destination !== undefined ? destinations[destination].description : ''}</p>
+          <p class="event__destination-description">${destination !== undefined ? destinations[destination].description : ''}</p>
           <div class="event__photos-container">
             <div class="event__photos-tape">
               ${photoTemplate}
@@ -259,11 +259,15 @@ export default class EditPointView extends AbstractStatefulView {
 
   #eventDestinationInputHandler = (evt) => {
     evt.preventDefault();
-    if (evt.target.value) {
-      this.updateElement({
-        destination: CITIES.indexOf(evt.target.value),
-      });
-    }
+    CITIES.forEach((city) => {
+      if (city === evt.target.value && evt.target.value){
+        this.updateElement({
+          destination: CITIES.indexOf(evt.target.value),
+        });
+      } else {
+        evt.target.value = '';
+      }
+    });
   };
 
   #eventSelectOffersToggleHandler = () => {
