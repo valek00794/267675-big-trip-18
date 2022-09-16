@@ -1,8 +1,9 @@
 import { render, replace, remove } from '../framework/render.js';
+
 import EditPointView from '../view/edit-point-view.js';
 import ListPointView from '../view/list-point-view.js';
-import { Mode } from '../mock/consts.js';
 
+import { Mode, UserAction, UpdateType } from '../mock/consts.js';
 
 export default class PointPresenter {
   #contentList = null;
@@ -34,6 +35,7 @@ export default class PointPresenter {
     this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
     this.#pointEditComponent.setFormSubmitHandler(this.#handleEditClickFormSubmit);
     this.#pointEditComponent.setEditClickHandler(this.#handleEditCloseClick);
+    this.#pointEditComponent.setDeleteClickHandler(this.#handleDeleteClick);
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
       render(this.#pointComponent, this.#contentList);
@@ -81,7 +83,6 @@ export default class PointPresenter {
       evt.preventDefault();
       this.#pointEditComponent.reset(this.#point);
       this.#replaceFormToPoint();
-      document.removeEventListener('keydown', this.#escKeyDownHandler);
     }
   };
 
@@ -89,7 +90,19 @@ export default class PointPresenter {
     this.#replacePointToForm();
   };
 
-  #handleEditClickFormSubmit = () => {
+  #handleEditClickFormSubmit = (point) => {
+    const updatePoint = {...point};
+    delete updatePoint.type;
+    const currentPoint = {...this.#point};
+    delete currentPoint.type;
+
+    const isMinorUpdate = JSON.stringify(updatePoint) !== JSON.stringify(currentPoint);
+
+    this.#changeData(
+      UserAction.UPDATE_POINT,
+      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+      point,
+    );
     this.#replaceFormToPoint();
   };
 
@@ -100,7 +113,19 @@ export default class PointPresenter {
   };
 
   #handleFavoriteClick = () => {
-    this.#changeData({...this.#point, isFavorite: !this.#point.isFavorite});
+    this.#changeData(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      {...this.#point, isFavorite: !this.#point.isFavorite});
+  };
+
+  #handleDeleteClick = (point) => {
+    this.#changeData(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      point,
+    );
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 }
 

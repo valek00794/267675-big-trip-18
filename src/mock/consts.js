@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 const POINT_COUNT = 3;
 
 const CITY_DESC = [
@@ -69,6 +71,26 @@ const SortType = {
   PTICE: 'price',
 };
 
+const UserAction = {
+  UPDATE_POINT: 'UPDATE_POINT',
+  ADD_POINT: 'ADD_POINT',
+  DELETE_POINT: 'DELETE_POINT',
+};
+
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
+const NewPoint = {
+  dateFrom: dayjs(),
+  dateTo: dayjs(),
+  type: TYPES[0],
+  basePrice: 0,
+  offers: [],
+};
+
 export {
   POINT_COUNT,
   CITY_DESC,
@@ -81,4 +103,7 @@ export {
   maxShowTitleCities,
   Mode,
   SortType,
+  UserAction,
+  UpdateType,
+  NewPoint,
 };
