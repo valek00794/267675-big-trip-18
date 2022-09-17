@@ -37,18 +37,18 @@ export default class PointApiService extends ApiService {
   };
 
   #adaptToServer = (point) => {
-    const adaptedTask = {...point,
-      'base_price': point.basePrice,
+    const adaptedPoint = {...point,
+      'base_price': Number(point.basePrice),
       'date_from': point.dateFrom instanceof Date ? point.dateFrom.toISOString() : null,
       'date_to': point.dateTo instanceof Date ? point.dateTo.toISOString() : null,
       'is_favorite': point.isFavorite,
     };
 
-    delete adaptedTask.basePrice;
-    delete adaptedTask.dateFrom;
-    delete adaptedTask.dateTo;
-    delete adaptedTask.isFavorite;
+    delete adaptedPoint.basePrice;
+    delete adaptedPoint.dateFrom;
+    delete adaptedPoint.dateTo;
+    delete adaptedPoint.isFavorite;
 
-    return adaptedTask;
+    return adaptedPoint;
   };
 }
