@@ -8,6 +8,8 @@ import { Mode, UserAction, UpdateType } from '../mock/consts.js';
 export default class PointPresenter {
   #contentList = null;
   #point = null;
+  #offers = null;
+  #destinations = null;
 
   #changeData = null;
   #changeMode = null;
@@ -22,14 +24,16 @@ export default class PointPresenter {
     this.#changeMode = changeMode;
   }
 
-  init = (point) => {
+  init = (point, offers, destinations) => {
     this.#point = point;
+    this.#offers = offers;
+    this.#destinations = destinations;
 
     const prevPointComponent = this.#pointComponent;
     const prevPointEditComponent = this.#pointEditComponent;
 
-    this.#pointComponent = new ListPointView(point);
-    this.#pointEditComponent = new EditPointView(point);
+    this.#pointComponent = new ListPointView(point, this.#offers, this.#destinations );
+    this.#pointEditComponent = new EditPointView(point, this.#offers, this.#destinations);
 
     this.#pointComponent.setEditClickHandler(this.#handleEditClick);
     this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);

@@ -5,6 +5,8 @@ import {UpdateType} from '../mock/consts.js';
 export default class PointsModel extends Observable {
   #pointsApiService = null;
   #points = [];
+  #destinations = [];
+  #offers = [];
 
   constructor(pointsApiService) {
     super();
@@ -16,13 +18,34 @@ export default class PointsModel extends Observable {
     return this.#points;
   }
 
+  get destinations() {
+    return this.#destinations;
+  }
+
+  get offers() {
+    return this.#offers;
+  }
+
   init = async () => {
     try {
-      const tasks = await this.#pointsApiService.points;
-      this.#points = tasks.map(this.#adaptToClient);
+      const points = await this.#pointsApiService.points;
+      this.#points = points.map(this.#adaptToClient);
     } catch(err) {
       this.#points = [];
     }
+
+    try {
+      this.#destinations = await this.#pointsApiService.destinations;
+    } catch(err) {
+      this.#destinations = [];
+    }
+
+    try {
+      this.#offers = await this.#pointsApiService.offers;
+    } catch(err) {
+      this.#offers = [];
+    }
+
     this._notify(UpdateType.INIT);
   };
 
