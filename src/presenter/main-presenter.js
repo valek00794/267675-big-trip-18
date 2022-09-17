@@ -4,12 +4,13 @@ import ContentListView from '../view/content-list-view.js';
 import ListEmptyView from '../view/list-empty-view.js';
 import SortView from '../view/sort-view.js';
 import TripInfoView from '../view/trip-info-view.js';
+import LoadingView from '../view/loading-view.js';
 
 import PointPresenter from './point-presenter.js';
 import NewPointPresenter from './new-point-presenter.js';
 
 import { sortPointUp, sortPointPrice, sortPointTime } from '../utils/point.js';
-import {filter} from '../utils/filter.js';
+import { filter } from '../utils/filter.js';
 
 import { SortType, UpdateType, UserAction, FilterType } from '../mock/consts.js';
 import { generateTripInfo } from '../mock/trip-info.js';
@@ -21,6 +22,7 @@ export default class MainPresenter {
   #filterModel = null;
 
   #contentListComponent = new ContentListView();
+  #loadingComponent = new LoadingView();
   #emptyComponent = null;
   #sortComponent = null;
   #tripInfoComponent = null;
@@ -30,6 +32,7 @@ export default class MainPresenter {
   #newPointPresenter = null;
   #currentSortType = SortType.DEFAULT;
   #filterType = FilterType.ALL;
+  #isLoading = true;
 
   constructor(contentContainer, pointsModel, filterModel) {
     this.#contentContainer = contentContainer;
@@ -83,6 +86,10 @@ export default class MainPresenter {
     render(this.#emptyComponent, this.#contentContainer);
   };
 
+  #renderLoading = () => {
+    render(this.#loadingComponent, this.#contentContainer, RenderPosition.AFTERBEGIN);
+  };
+
   #renderSort = () => {
     this.#sortComponent = new SortView(this.#currentSortType);
     this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
@@ -129,7 +136,12 @@ export default class MainPresenter {
         this.#renderContent();
         break;
       case UpdateType.MAJOR:
-        this.#clearContent({resetSortType: true});
+        this.#clearContent({ resetSortType: true });
+        this.#renderContent();
+        break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
         this.#renderContent();
         break;
     }
@@ -140,7 +152,7 @@ export default class MainPresenter {
     this.#pointsPresenter.forEach((presenter) => presenter.resetView());
   };
 
-  #clearContent = ({resetSortType = false} = {}) => {
+  #clearContent = ({ resetSortType = false } = {}) => {
 
     this.#newPointPresenter.destroy();
     this.#pointsPresenter.forEach((presenter) => presenter.destroy());
@@ -149,8 +161,9 @@ export default class MainPresenter {
     remove(this.#sortComponent);
     remove(this.#tripInfoComponent);
     remove(this.#filterComponent);
+    remove(this.#loadingComponent);
 
-    if (this.#emptyComponent){
+    if (this.#emptyComponent) {
       remove(this.#emptyComponent);
     }
 
@@ -160,6 +173,13 @@ export default class MainPresenter {
   };
 
   #renderContent = () => {
+    render(this.#contentListComponent, this.#contentContainer);
+
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
     const points = this.points;
     const pointCount = points.length;
     if (pointCount === 0) {
@@ -168,9 +188,6 @@ export default class MainPresenter {
     }
 
     this.#renderSort();
-
-    render(this.#contentListComponent, this.#contentContainer);
-
     this.#renderTripInfo();
     this.#renderPoints();
   };
