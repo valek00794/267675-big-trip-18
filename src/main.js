@@ -29,9 +29,14 @@ const handleNewEventButtonClick = () => {
   newEventBtn.disabled = true;
 };
 
-newEventBtn.addEventListener('click', handleNewEventButtonClick);
-
 mainPresenter.init();
 filterPresenter.init();
-pointsModel.init();
+
+newEventBtn.disabled = true;
+
+pointsModel.init()
+  .finally(() => {
+    handleNewEventFormClose();
+    newEventBtn.addEventListener('click', handleNewEventButtonClick);
+  });
 
