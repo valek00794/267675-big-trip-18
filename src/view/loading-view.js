@@ -1,8 +1,8 @@
 import AbstractView from '../framework/view/abstract-view.js';
 
 const createNoPointTemplate = () => (
-  `<p class="content__no-points">
-    Loading...
+  `<p class="trip-events__msg">
+    Loading... Please wait!
   </p>`
 );
 
