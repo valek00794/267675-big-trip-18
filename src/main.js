@@ -33,4 +33,5 @@ newEventBtn.addEventListener('click', handleNewEventButtonClick);
 
 mainPresenter.init();
 filterPresenter.init();
+pointsModel.init();
 
