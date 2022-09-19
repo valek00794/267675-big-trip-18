@@ -296,7 +296,12 @@ export default class EditPointView extends AbstractStatefulView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this._callback.formSubmit(EditPointView.parseStateToPoint(this._state));
+    if(evt.target.querySelector('.event__input--destination').value) {
+      evt.target.querySelector('.event__save-btn').textContent = 'Saving...';
+      this._callback.formSubmit(EditPointView.parseStateToPoint(this._state));
+    } else {
+      evt.target.querySelector('.event__input--destination').focus();
+    }
   };
 
   #editClickHandler = (evt) => {
@@ -306,6 +311,7 @@ export default class EditPointView extends AbstractStatefulView {
 
   #formDeleteClickHandler = (evt) => {
     evt.preventDefault();
+    evt.target.textContent = 'Deleting...';
     this._callback.deleteClick(EditPointView.parseStateToPoint(this._state));
   };
 
