@@ -129,7 +129,7 @@ export default class MainPresenter {
   #handleModelEvent = (updateType, data) => {
     switch (updateType) {
       case UpdateType.PATCH:
-        this.#pointsPresenter.get(data.id).init(data);
+        this.#pointsPresenter.get(data.id).init(data, this.#pointsModel.offers, this.#pointsModel.destinations);
         break;
       case UpdateType.MINOR:
         this.#clearContent();
