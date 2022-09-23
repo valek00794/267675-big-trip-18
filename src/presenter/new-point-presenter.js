@@ -4,30 +4,35 @@ import {nanoid} from 'nanoid';
 
 import EditPointView from '../view/edit-point-view.js';
 
-import { UserAction, UpdateType } from '../mock/consts.js';
+import { UserAction, UpdateType, NewPoint } from '../mock/consts.js';
 
 export default class NewPointPresenter {
   #contentList = null;
   #changeData = null;
   #pointEditComponent = null;
   #destroyCallback = null;
+  #offers = null;
+  #destinations = null;
 
   constructor(contentList, changeData) {
     this.#contentList = contentList;
     this.#changeData = changeData;
   }
 
-  init = (callback) => {
+  init = (callback, offers, destinations) => {
     this.#destroyCallback = callback;
+    this.#offers = offers;
+    this.#destinations = destinations;
 
     if (this.#pointEditComponent !== null) {
       return;
     }
 
-    this.#pointEditComponent = new EditPointView();
+    this.#pointEditComponent = new EditPointView(NewPoint, this.#offers, this.#destinations);
 
     this.#pointEditComponent.setFormSubmitHandler(this.#handleEditClickFormSubmit);
     this.#pointEditComponent.setDeleteClickHandler(this.#handleEditCloseClick);
+    this.#pointEditComponent.setEditClickHandler(this.#handleEditCloseClick);
 
     render(this.#pointEditComponent, this.#contentList.element, RenderPosition.AFTERBEGIN);
 

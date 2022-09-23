@@ -4,20 +4,19 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
 import { humanizeDateDDMMYYHHmm, setCapitalLetter } from '../utils/point.js';
+import { nanoid } from 'nanoid';
 
-import { TYPES, CITIES, NewPoint } from '../mock/consts.js';
-import { destinations } from '../mock/destination.js';
-import { mockOffersByType, mockOffers } from '../mock/offers.js';
-
-
-const editPointTemplate = (point) => {
+const editPointTemplate = (point, offersByType, destinations, cities) => {
   const { dateFrom, dateTo, type, destination, basePrice, offers } = point;
 
-  const isOfferChecked = (offer) => offers.includes(offer) ? 'checked' : '';
+  const types = offersByType ? offersByType.map((offerByType) => offerByType.type) : '';
+
+  const isOfferChecked = (offer) => offers.includes(offer.id) ? 'checked' : '';
 
   const createEditOfferTemplate = () => {
-    const offersByType = mockOffersByType.filter((typeOffers) => typeOffers.type === type);
-    return offersByType[0].offers.map((offer) => `
+    const offersBySelectedType = offersByType.find((offerByType) => offerByType.type === type).offers;
+
+    return offersBySelectedType.map((offer) => `
       <div class="event__offer-selector">
         <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.id}" data-id="${offer.id}" type="checkbox" name="event-offer-${offer.id}" ${isOfferChecked(offer)}>
         <label class="event__offer-label" for="event-offer-${offer.id}">
@@ -30,49 +29,54 @@ const editPointTemplate = (point) => {
   };
 
   const offersTemplate = createEditOfferTemplate();
-  const createPhotoTemplate = (pictures) =>
-    pictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`).join('');
 
-  const photoTemplate = destination !== undefined ? createPhotoTemplate(destinations[destination].pictures) : '';
+  const createPhotoTemplate = (destinationId) => {
+    const currentDest = destinations.find((dest) => dest.id === destinationId);
+    return currentDest ? currentDest.pictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`).join('') : '';
+  };
+
+  const photoTemplate = createPhotoTemplate(destination);
 
   const createEditTypeTemplate = (currentType) =>
-    TYPES.map((iterationType) => `
+    types.map((iterationType) => `
       <div class="event__type-item">
-        <input id="event-type-${iterationType}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${iterationType}" ${currentType === iterationType ? 'checked' : ''}>
-        <label class="event__type-label  event__type-label--${iterationType}" for="event-type-${iterationType}-1">${setCapitalLetter(iterationType)}</label>
+        <input id="event-type-${iterationType}-${destination}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${iterationType}" ${currentType === iterationType ? 'checked' : ''}>
+        <label class="event__type-label  event__type-label--${iterationType}" for="event-type-${iterationType}-${destination}">${setCapitalLetter(iterationType)}</label>
       </div>
     `).join('');
 
   const typesTemplate = createEditTypeTemplate(type);
 
-  const createDestinationListTemplate = (selectedCity) => `
-    <label class="event__label  event__type-output" for="event-destination-1">
-    ${type}
-    </label>
-    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${selectedCity}" list="destination-list-1" required>
-    <datalist id="destination-list-1">
-    ${CITIES.map((city) => `
-    <option value="${city}" ${selectedCity === city ? 'selected' : ''}></option>
-       `).join('')}
-    </datalist>`;
+  const createDestinationListTemplate = (destinationId) => {
+    const destName = destinations.find((dest) => dest.id === destinationId);
+    destinationId = destinationId !== undefined ? destinationId : destinationId = nanoid();
 
-  const destListTemplate = createDestinationListTemplate(destination !== undefined ? destinations[destination].name : '');
+    return `
+      <label class="event__label  event__type-output" for="event-destination-${destinationId}">${type}</label>
+      <input class="event__input  event__input--destination" id="event-destination-${destinationId}" type="text" name="event-destination" value="${destName ? destName.name : ''}" list="destination-list-${destinationId}" onFocus="this.select()" required>
+      <datalist id="destination-list-${destinationId}">
+        ${cities.map((city) => `
+        <option value="${city}" ${destName && destName.name === city ? 'selected' : ''}></option>
+        `).join('')}
+      </datalist>`;
+  };
+
+  const destListTemplate = createDestinationListTemplate(destination);
 
   return (`
     <li class="trip-events__item">
      <form class="event event--edit" action="#" method="post">
       <header class="event__header">
         <div class="event__type-wrapper">
-          <label class="event__type  event__type-btn" for="event-type-toggle-1">
+          <label class="event__type  event__type-btn" for="event-type-toggle-${destination}">
             <span class="visually-hidden">Choose event type</span>
             <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
           </label>
-          <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
+          <input class="event__type-toggle  visually-hidden" id="event-type-toggle-${destination}" type="checkbox">
 
           <div class="event__type-list">
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Event type</legend>
-
               ${typesTemplate}
             </fieldset>
           </div>
@@ -83,19 +87,19 @@ const editPointTemplate = (point) => {
         </div>
 
         <div class="event__field-group  event__field-group--time">
-          <label class="visually-hidden" for="event-start-time-1">From</label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${humanizeDateDDMMYYHHmm(dateFrom)}">
+          <label class="visually-hidden" for="event-start-time-${destination}">From</label>
+          <input class="event__input  event__input--time" id="event-start-time-${destination}" type="text" name="event-start-time" value="${humanizeDateDDMMYYHHmm(dateFrom)}">
           —
-          <label class="visually-hidden" for="event-end-time-1">To</label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${humanizeDateDDMMYYHHmm(dateTo)}">
+          <label class="visually-hidden" for="event-end-time-${destination}">To</label>
+          <input class="event__input  event__input--time" id="event-end-time-${destination}" type="text" name="event-end-time" value="${humanizeDateDDMMYYHHmm(dateTo)}">
         </div>
 
         <div class="event__field-group  event__field-group--price">
-          <label class="event__label" for="event-price-1">
+          <label class="event__label" for="event-price-${destination}">
             <span class="visually-hidden">Price</span>
             €
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${Math.abs(Number(basePrice))}" onkeydown="return event.keyCode !== 69 && event.keyCode !== 189" >
+          <input class="event__input  event__input--price" id="event-price-${destination}" type="number" name="event-price" value="${Math.abs(Number(basePrice))}" onkeydown="return event.keyCode !== 69 && event.keyCode !== 189" onFocus="this.select()">
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -105,7 +109,7 @@ const editPointTemplate = (point) => {
         </button>
       </header>
       <section class="event__details">
-        <section class="event__section  event__section--offers">
+        <section class="event__section  event__section--offers ${!offersTemplate ? 'visually-hidden' : '' }" >
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
           <div class="event__available-offers">
           ${offersTemplate}
@@ -114,7 +118,7 @@ const editPointTemplate = (point) => {
 
         <section class="event__section  event__section--destination ${destination === undefined ? 'visually-hidden' : ''}">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">${destination !== undefined ? destinations[destination].description : ''}</p>
+          <p class="event__destination-description">${destinations[destination] !== undefined ? destinations[destination].description : ''}</p>
           <div class="event__photos-container">
             <div class="event__photos-tape">
               ${photoTemplate}
@@ -129,14 +133,17 @@ const editPointTemplate = (point) => {
 
 export default class EditPointView extends AbstractStatefulView {
   #datepicker = null;
+  #offersByType = null;
+  #destinations = null;
+  #cities = null;
 
-  constructor(point) {
+  constructor(point, offersByType, destinations) {
     super();
-    if (!point) {
-      point = NewPoint;
-    }
 
+    this.#offersByType = offersByType;
+    this.#destinations = destinations;
     this._state = EditPointView.parsePointToState(point);
+    this.#cities = this.#destinations.map((dest) => dest.name);
 
     this.#setInnerHandlers();
     this.#setFromDatepicker();
@@ -144,7 +151,7 @@ export default class EditPointView extends AbstractStatefulView {
   }
 
   get template() {
-    return editPointTemplate(this._state);
+    return editPointTemplate(this._state, this.#offersByType, this.#destinations, this.#cities);
   }
 
   removeElement = () => {
@@ -257,11 +264,16 @@ export default class EditPointView extends AbstractStatefulView {
 
   #eventDestinationInputHandler = (evt) => {
     evt.preventDefault();
-    if (CITIES.includes(evt.target.value) && evt.target.value) {
-      this.updateElement({
-        destination: CITIES.indexOf(evt.target.value),
+    if (this.#cities.includes(evt.target.value)) {
+      this.#destinations.forEach((dest) => {
+        if (evt.target.value && dest.name === evt.target.value) {
+          this.updateElement({
+            destination: dest.id,
+          });
+        }
       });
-    } else {
+    }
+    else {
       evt.target.value = '';
     }
   };
@@ -269,7 +281,7 @@ export default class EditPointView extends AbstractStatefulView {
   #eventSelectOffersToggleHandler = () => {
     const selectOffers = [];
     Array.from(this.element.querySelectorAll('.event__offer-checkbox'))
-      .forEach((checkbox) => checkbox.checked ? selectOffers.push(mockOffers[Number(checkbox.dataset.id)]) : '');
+      .forEach((checkbox) => checkbox.checked ? selectOffers.push(Number(checkbox.dataset.id)) : '');
     this.updateElement({
       offers: selectOffers,
     });
