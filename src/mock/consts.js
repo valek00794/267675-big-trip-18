@@ -32,11 +32,11 @@ const UpdateType = {
   INIT: 'INIT',
 };
 
-const NewPoint = {
+const BlankPoint = {
   dateFrom: dayjs(),
   dateTo: dayjs(),
   type: 'taxi',
-  basePrice: 0,
+  basePrice: '',
   offers: [],
 };
 
@@ -47,5 +47,5 @@ export {
   SortType,
   UserAction,
   UpdateType,
-  NewPoint,
+  BlankPoint,
 };
