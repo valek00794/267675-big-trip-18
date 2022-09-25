@@ -41,6 +41,11 @@ const BlankPoint = {
   offers: [],
 };
 
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
+
 export {
   FilterType,
   maxShowTitleCities,
@@ -49,4 +54,5 @@ export {
   UserAction,
   UpdateType,
   BlankPoint,
+  TimeLimit,
 };

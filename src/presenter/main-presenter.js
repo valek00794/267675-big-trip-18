@@ -1,4 +1,5 @@
 import { render, RenderPosition, remove } from '../framework/render.js';
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 
 import ContentListView from '../view/content-list-view.js';
 import ListEmptyView from '../view/list-empty-view.js';
@@ -12,7 +13,7 @@ import NewPointPresenter from './new-point-presenter.js';
 import { sortPointUp, sortPointPrice, sortPointTime } from '../utils/point.js';
 import { filter } from '../utils/filter.js';
 
-import { SortType, UpdateType, UserAction, FilterType } from '../mock/consts.js';
+import { SortType, UpdateType, UserAction, FilterType, TimeLimit } from '../mock/consts.js';
 import { generateTripInfo } from '../mock/trip-info.js';
 
 
@@ -33,6 +34,7 @@ export default class MainPresenter {
   #currentSortType = SortType.DEFAULT;
   #filterType = FilterType.ALL;
   #isLoading = true;
+  #uiBlocker = new UiBlocker(TimeLimit.LOWER_LIMIT, TimeLimit.UPPER_LIMIT);
 
   constructor(contentContainer, pointsModel, filterModel) {
     this.#contentContainer = contentContainer;
@@ -113,6 +115,8 @@ export default class MainPresenter {
   };
 
   #handleViewAction = async (actionType, updateType, update) => {
+    this.#uiBlocker.block();
+
     switch (actionType) {
       case UserAction.UPDATE_POINT:
         this.#pointsPresenter.get(update.id).setSaving();
@@ -139,6 +143,7 @@ export default class MainPresenter {
         }
         break;
     }
+    this.#uiBlocker.unblock();
   };
 
   #handleModelEvent = (updateType, data) => {
