@@ -33,6 +33,7 @@ const UpdateType = {
 };
 
 const BlankPoint = {
+  destination: 0,
   dateFrom: dayjs(),
   dateTo: dayjs(),
   type: 'taxi',

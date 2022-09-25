@@ -4,7 +4,6 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
 import { humanizeDateDDMMYYHHmm, setCapitalLetter } from '../utils/point.js';
-import { nanoid } from 'nanoid';
 
 const editPointTemplate = (point, offersByType, destinations, cities) => {
   const {
@@ -59,7 +58,6 @@ const editPointTemplate = (point, offersByType, destinations, cities) => {
 
   const createDestinationListTemplate = (destinationId) => {
     const destName = destinations.find((dest) => dest.id === destinationId);
-  //  destinationId = destinationId !== undefined ? destinationId : destinationId = nanoid();
 
     return `
       <label class="event__label  event__type-output" for="event-destination-${destinationId}">${type}</label>
