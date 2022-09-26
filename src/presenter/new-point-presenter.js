@@ -1,10 +1,8 @@
 import { render, remove, RenderPosition } from '../framework/render.js';
 
-import {nanoid} from 'nanoid';
-
 import EditPointView from '../view/edit-point-view.js';
 
-import { UserAction, UpdateType, NewPoint } from '../mock/consts.js';
+import { UserAction, UpdateType, BlankPoint } from '../mock/consts.js';
 
 export default class NewPointPresenter {
   #contentList = null;
@@ -28,7 +26,7 @@ export default class NewPointPresenter {
       return;
     }
 
-    this.#pointEditComponent = new EditPointView(NewPoint, this.#offers, this.#destinations);
+    this.#pointEditComponent = new EditPointView(BlankPoint, this.#offers, this.#destinations);
 
     this.#pointEditComponent.setFormSubmitHandler(this.#handleEditClickFormSubmit);
     this.#pointEditComponent.setDeleteClickHandler(this.#handleEditCloseClick);
@@ -52,6 +50,24 @@ export default class NewPointPresenter {
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 
+  setSaving = () => {
+    this.#pointEditComponent.updateElement({
+      isDisabled: true,
+      isSaving: true,
+    });
+  };
+
+  setAborting = () => {
+    const resetFormState = () => {
+      this.#pointEditComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#pointEditComponent.shake(resetFormState);
+  };
 
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
@@ -64,7 +80,7 @@ export default class NewPointPresenter {
     this.#changeData(
       UserAction.ADD_POINT,
       UpdateType.MINOR,
-      {id: nanoid(), ...point},
+      point,
     );
   };
 
