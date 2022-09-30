@@ -27,23 +27,18 @@ export default class PointsModel extends Observable {
   }
 
   init = async () => {
+    const newEventBtn = document.querySelector('.trip-main__event-add-btn');
     try {
       const points = await this.#pointsApiService.points;
       this.#points = points.map(this.#adaptToClient);
+      this.#destinations = await this.#pointsApiService.destinations;
+      this.#offers = await this.#pointsApiService.offers;
+      newEventBtn.disabled = false;
     } catch(err) {
       this.#points = [];
-    }
-
-    try {
-      this.#destinations = await this.#pointsApiService.destinations;
-    } catch(err) {
       this.#destinations = [];
-    }
-
-    try {
-      this.#offers = await this.#pointsApiService.offers;
-    } catch(err) {
       this.#offers = [];
+      newEventBtn.disabled = true;
     }
 
     this._notify(UpdateType.INIT);

@@ -33,12 +33,13 @@ const UpdateType = {
 };
 
 const BlankPoint = {
-  destination: 0,
+  destination: '',
   dateFrom: dayjs(),
   dateTo: dayjs(),
   type: 'taxi',
   basePrice: '',
   offers: [],
+  isNewPoint: true,
 };
 
 const TimeLimit = {

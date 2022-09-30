@@ -3,6 +3,7 @@ import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 
 import ContentListView from '../view/content-list-view.js';
 import ListEmptyView from '../view/list-empty-view.js';
+import ListErrorView from '../view/list-error-view.js';
 import SortView from '../view/sort-view.js';
 import TripInfoView from '../view/trip-info-view.js';
 import LoadingView from '../view/loading-view.js';
@@ -85,6 +86,11 @@ export default class MainPresenter {
 
   #renderEmptyContentList = () => {
     this.#emptyComponent = new ListEmptyView(this.#filterType);
+    render(this.#emptyComponent, this.#contentContainer);
+  };
+
+  #renderErrorContentList = () => {
+    this.#emptyComponent = new ListErrorView();
     render(this.#emptyComponent, this.#contentContainer);
   };
 
@@ -201,6 +207,12 @@ export default class MainPresenter {
     }
 
     const pointCount = this.points.length;
+
+    if (pointCount === 0 && this.#pointsModel.offers.length === 0 && this.#pointsModel.destinations.length === 0) {
+      this.#renderErrorContentList();
+      return;
+    }
+
     if (pointCount === 0) {
       this.#renderEmptyContentList();
       return;
