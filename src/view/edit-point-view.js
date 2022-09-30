@@ -78,9 +78,7 @@ const editPointTemplate = (point, offersByType, destinations, cities) => {
     if (isNewPoint) {
       return 'Cancel';
     }
-    else {
-      return isDeleting ? 'Deleting...' : 'Delete';
-    }
+    return isDeleting ? 'Deleting...' : 'Delete';
   };
 
   return (`

@@ -118,6 +118,9 @@ export default class PointPresenter {
   };
 
   #escKeyDownHandler = (evt) => {
+    if (evt.target.classList.contains('event__input--time')){
+      evt.target.blur();
+    }
     if (!evt.target.classList.contains('event__input--time') && (evt.key === 'Escape' || evt.key === 'Esc')) {
       evt.preventDefault();
       this.#pointEditComponent.reset(this.#point);
