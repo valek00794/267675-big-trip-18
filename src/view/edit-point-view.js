@@ -228,12 +228,6 @@ export default class EditPointView extends AbstractStatefulView {
   };
 
   #dateStartHandler = ([userDateStart]) => {
-    if (userDateStart > this._state.dateTo) {
-      this._setState({
-        dateFrom: userDateStart,
-        dateTo: userDateStart,
-      });
-    }
     this._setState({
       dateFrom: userDateStart,
     });
