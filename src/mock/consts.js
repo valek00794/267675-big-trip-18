@@ -6,7 +6,7 @@ const FilterType = {
   PAST: 'past',
 };
 
-const maxShowTitleCities = 3;
+const MAX_SHOW_TITLE_CITIES = 3;
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -49,7 +49,7 @@ const TimeLimit = {
 
 export {
   FilterType,
-  maxShowTitleCities,
+  MAX_SHOW_TITLE_CITIES,
   Mode,
   SortType,
   UserAction,

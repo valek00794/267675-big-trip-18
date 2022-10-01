@@ -23,7 +23,7 @@ const handleNewEventFormClose = () => {
   newEventBtn.disabled = false;
 };
 
-const handleNewEventButtonClick = () => {
+const newEventButtonClickHandler = () => {
   mainPresenter.createPoint(handleNewEventFormClose);
   newEventBtn.disabled = true;
 };
@@ -35,6 +35,6 @@ newEventBtn.disabled = true;
 
 pointsModel.init()
   .finally(() => {
-    newEventBtn.addEventListener('click', handleNewEventButtonClick);
+    newEventBtn.addEventListener('click', newEventButtonClickHandler);
   });
 
